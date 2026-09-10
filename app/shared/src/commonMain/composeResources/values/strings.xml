@@ -1,0 +1,15 @@
+<resources>
+    <!-- 主导航标签 -->
+    <string name="nav_study">Study</string>
+    <string name="nav_lists">Lists</string>
+    <string name="nav_dictionary">Dictionary</string>
+    <string name="nav_explore">Explore</string>
+    <string name="nav_settings">Settings</string>
+    <!-- 屏标题 -->
+    <string name="screen_study">Study Hub</string>
+    <string name="screen_lists">Word Lists</string>
+    <string name="screen_dictionary">Dictionary</string>
+    <string name="screen_explore">Explore</string>
+    <string name="screen_settings">Settings</string>
+    <string name="screen_showcase">Design Showcase</string>
+</resources>

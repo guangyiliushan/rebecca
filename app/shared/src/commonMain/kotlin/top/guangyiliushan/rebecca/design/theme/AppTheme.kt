@@ -76,7 +76,7 @@ fun AppColors.toMaterialColorScheme(): ColorScheme {
         background = background, onBackground = onBackground,
         surface = surface, onSurface = onSurface,
         // 语义槽 → M3 角色
-        secondary = muted, onSecondary = onMuted,
+        secondary = primary, onSecondary = onPrimary,
         tertiary = accent, onTertiary = onAccent,
         error = destructive, onError = onDestructive,
         surfaceVariant = muted, onSurfaceVariant = onMuted,
@@ -84,7 +84,7 @@ fun AppColors.toMaterialColorScheme(): ColorScheme {
         surfaceTint = primary,
         // 容器槽：派生（accent 槽即"容器色对"；error 容器 alpha 派生）
         primaryContainer = accent, onPrimaryContainer = onAccent,
-        secondaryContainer = muted, onSecondaryContainer = onMuted,
+        secondaryContainer = accent, onSecondaryContainer = onAccent,
         tertiaryContainer = accent, onTertiaryContainer = onAccent,
         errorContainer = destructive.copy(alpha = 0.12f), onErrorContainer = destructive,
         inverseSurface = onSurface, inverseOnSurface = surface, inversePrimary = primary,
