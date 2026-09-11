@@ -89,7 +89,10 @@ fun TokensShowcase(
 
         SectionTitle("Radius")
         Row(horizontalArrangement = Arrangement.spacedBy(spacing.sm)) {
-            listOf("sm" to radius.sm, "md" to radius.md, "lg" to radius.lg, "xl" to radius.xl)
+            listOf(
+                "extraSmall" to radius.extraSmall, "small" to radius.small, "medium" to radius.medium,
+                "large" to radius.large, "extraLarge" to radius.extraLarge,
+            )
                 .forEach { (name, value) ->
                     Column(horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally) {
                         Box(
@@ -189,9 +192,9 @@ private fun ColorSlotRow(colors: AppColors, dark: Boolean) {
                 Box(
                     Modifier
                         .size(spacing.lg)
-                        .clip(RoundedCornerShape(AppTheme.radius.sm))
+                        .clip(RoundedCornerShape(AppTheme.radius.small))
                         .background(color)
-                        .border(1.dp, AppTheme.colors.border, RoundedCornerShape(AppTheme.radius.sm)),
+                        .border(1.dp, AppTheme.colors.border, RoundedCornerShape(AppTheme.radius.small)),
                 )
                 Text(
                     "$name  #${colorHex(color)}",

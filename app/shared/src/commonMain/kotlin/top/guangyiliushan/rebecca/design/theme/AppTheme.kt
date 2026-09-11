@@ -15,7 +15,12 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import top.guangyiliushan.rebecca.design.theme.palettes.TealPalette
 import top.guangyiliushan.rebecca.design.tokens.AppColors
 import top.guangyiliushan.rebecca.design.tokens.AppContentWidth
+import top.guangyiliushan.rebecca.design.tokens.AppControlHeight
 import top.guangyiliushan.rebecca.design.tokens.AppElevation
+import top.guangyiliushan.rebecca.design.tokens.AppIconSize
+import top.guangyiliushan.rebecca.design.tokens.AppMotion
+import top.guangyiliushan.rebecca.design.tokens.AppOverlaySize
+import top.guangyiliushan.rebecca.design.tokens.AppOverlayWidth
 import top.guangyiliushan.rebecca.design.tokens.AppRadius
 import top.guangyiliushan.rebecca.design.tokens.AppSpacing
 import top.guangyiliushan.rebecca.design.tokens.AppType
@@ -24,9 +29,14 @@ import top.guangyiliushan.rebecca.design.tokens.AppType
 val LocalAppColors = staticCompositionLocalOf { TealPalette.light }
 val LocalAppSpacing = staticCompositionLocalOf { AppSpacing }
 val LocalAppRadius = staticCompositionLocalOf { AppRadius }
-val LocalAppType = staticCompositionLocalOf { AppType }
+val LocalAppType = staticCompositionLocalOf { AppType() }
 val LocalAppElevation = staticCompositionLocalOf { AppElevation }
 val LocalAppContentWidth = staticCompositionLocalOf { AppContentWidth }
+val LocalAppControlHeight = staticCompositionLocalOf { AppControlHeight }
+val LocalAppIconSize = staticCompositionLocalOf { AppIconSize }
+val LocalAppOverlayWidth = staticCompositionLocalOf { AppOverlayWidth }
+val LocalAppOverlaySize = staticCompositionLocalOf { AppOverlaySize }
+val LocalAppMotion = staticCompositionLocalOf { AppMotion }
 
 @Composable
 fun AppTheme(
@@ -39,14 +49,19 @@ fun AppTheme(
         LocalAppColors provides colors,
         LocalAppSpacing provides AppSpacing,
         LocalAppRadius provides AppRadius,
-        LocalAppType provides AppType,
+        LocalAppType provides AppType(),
         LocalAppElevation provides AppElevation,
         LocalAppContentWidth provides AppContentWidth,
+        LocalAppControlHeight provides AppControlHeight,
+        LocalAppIconSize provides AppIconSize,
+        LocalAppOverlayWidth provides AppOverlayWidth,
+        LocalAppOverlaySize provides AppOverlaySize,
+        LocalAppMotion provides AppMotion,
     ) {
         key(theme) {   // 主题切换整块重建（frontend-design-system §4.1）
             MaterialTheme(
                 colorScheme = colors.toMaterialColorScheme(),
-                typography = AppType.toMaterialTypography(),
+                typography = AppType().toMaterialTypography(),
                 shapes = AppShapes,
                 content = content,
             )
@@ -62,6 +77,11 @@ object AppTheme {
     val type: AppType @Composable @ReadOnlyComposable get() = LocalAppType.current
     val elevation: AppElevation @Composable @ReadOnlyComposable get() = LocalAppElevation.current
     val contentWidth: AppContentWidth @Composable @ReadOnlyComposable get() = LocalAppContentWidth.current
+    val controlHeight: AppControlHeight @Composable @ReadOnlyComposable get() = LocalAppControlHeight.current
+    val iconSize: AppIconSize @Composable @ReadOnlyComposable get() = LocalAppIconSize.current
+    val overlayWidth: AppOverlayWidth @Composable @ReadOnlyComposable get() = LocalAppOverlayWidth.current
+    val overlaySize: AppOverlaySize @Composable @ReadOnlyComposable get() = LocalAppOverlaySize.current
+    val motion: AppMotion @Composable @ReadOnlyComposable get() = LocalAppMotion.current
 }
 
 /**
@@ -103,27 +123,33 @@ fun AppColors.toMaterialColorScheme(): ColorScheme {
     )
 }
 
-/** 字阶桥接：AppType 9 级 → M3 Typography（未覆盖级沿用 M3 默认）。 */
+/** 字阶桥接：AppType M3 官方 15 档 → M3 Typography（零翻译，size/lineHeight 1:1）。 */
 fun AppType.toMaterialTypography(): Typography {
     val base = Typography()
     return base.copy(
-        displayLarge = base.displayLarge.copy(fontSize = display),
-        headlineMedium = base.headlineMedium.copy(fontSize = headline),
-        titleLarge = base.titleLarge.copy(fontSize = titleLg),
-        titleMedium = base.titleMedium.copy(fontSize = title),
-        titleSmall = base.titleSmall.copy(fontSize = titleSm),
-        bodyLarge = base.bodyLarge.copy(fontSize = bodyLg),
-        bodyMedium = base.bodyMedium.copy(fontSize = body),
-        bodySmall = base.bodySmall.copy(fontSize = bodySm),
-        labelLarge = base.labelLarge.copy(fontSize = label),
+        displayLarge = base.displayLarge.copy(fontSize = displayLarge.size, lineHeight = displayLarge.lineHeight),
+        displayMedium = base.displayMedium.copy(fontSize = displayMedium.size, lineHeight = displayMedium.lineHeight),
+        displaySmall = base.displaySmall.copy(fontSize = displaySmall.size, lineHeight = displaySmall.lineHeight),
+        headlineLarge = base.headlineLarge.copy(fontSize = headlineLarge.size, lineHeight = headlineLarge.lineHeight),
+        headlineMedium = base.headlineMedium.copy(fontSize = headlineMedium.size, lineHeight = headlineMedium.lineHeight),
+        headlineSmall = base.headlineSmall.copy(fontSize = headlineSmall.size, lineHeight = headlineSmall.lineHeight),
+        titleLarge = base.titleLarge.copy(fontSize = titleLarge.size, lineHeight = titleLarge.lineHeight),
+        titleMedium = base.titleMedium.copy(fontSize = titleMedium.size, lineHeight = titleMedium.lineHeight),
+        titleSmall = base.titleSmall.copy(fontSize = titleSmall.size, lineHeight = titleSmall.lineHeight),
+        bodyLarge = base.bodyLarge.copy(fontSize = bodyLarge.size, lineHeight = bodyLarge.lineHeight),
+        bodyMedium = base.bodyMedium.copy(fontSize = bodyMedium.size, lineHeight = bodyMedium.lineHeight),
+        bodySmall = base.bodySmall.copy(fontSize = bodySmall.size, lineHeight = bodySmall.lineHeight),
+        labelLarge = base.labelLarge.copy(fontSize = labelLarge.size, lineHeight = labelLarge.lineHeight),
+        labelMedium = base.labelMedium.copy(fontSize = labelMedium.size, lineHeight = labelMedium.lineHeight),
+        labelSmall = base.labelSmall.copy(fontSize = labelSmall.size, lineHeight = labelSmall.lineHeight),
     )
 }
 
-/** 圆角桥接。 */
+/** 圆角桥接：M3 Shapes 五档 1:1。 */
 val AppShapes = Shapes(
-    extraSmall = RoundedCornerShape(AppRadius.sm),
-    small = RoundedCornerShape(AppRadius.md),
-    medium = RoundedCornerShape(AppRadius.lg),
-    large = RoundedCornerShape(AppRadius.xl),
-    extraLarge = RoundedCornerShape(AppRadius.xl),
+    extraSmall = RoundedCornerShape(AppRadius.extraSmall),
+    small = RoundedCornerShape(AppRadius.small),
+    medium = RoundedCornerShape(AppRadius.medium),
+    large = RoundedCornerShape(AppRadius.large),
+    extraLarge = RoundedCornerShape(AppRadius.extraLarge),
 )
