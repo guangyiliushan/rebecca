@@ -1,0 +1,12 @@
+name: Gradle setup
+description: "共享 CI 前置：JDK 21（temurin，对齐 AGENTS.md）+ Gradle 依赖/构建缓存（ci-cd.md §2）"
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: '21'
+
+    - uses: gradle/actions/setup-gradle@v4
