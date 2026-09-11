@@ -7,6 +7,14 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinSerialization)
+    id("dev.detekt") version "2.0.0-alpha.6"
+}
+
+// Phase 0 spike（plan Task 0.4）：detekt 2.0.0-alpha.6 能否扫描 KMP commonMain（Q2 硬缺口）
+detekt {
+    source.setFrom("src/commonMain/kotlin")
+    buildUponDefaultConfig = true
+    parallel = true
 }
 
 kotlin {
@@ -74,6 +82,11 @@ kotlin {
         commonTest.dependencies {
             implementation(libs.kotlin.test)
             implementation(libs.kotlinx.serialization.json)
+            implementation(libs.compose.uiTest)
+        }
+        jvmTest.dependencies {
+            // desktop UI 测试运行时需要 skiko awt 本机库（PocComposeUiTest 前置）
+            implementation(compose.desktop.currentOs)
         }
         jsMain.dependencies {
             implementation(libs.wrappers.browser)

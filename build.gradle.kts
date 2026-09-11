@@ -8,4 +8,5 @@ plugins {
     alias(libs.plugins.kotlinJvm) apply false
     alias(libs.plugins.kotlinMultiplatform) apply false
     alias(libs.plugins.ktor) apply false
+    id("dev.detekt") version "2.0.0-alpha.6" apply false
 }
