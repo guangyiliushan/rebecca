@@ -7,7 +7,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.ui.NavDisplay
-import top.guangyiliushan.rebecca.design.components.AppScaffold
+import top.guangyiliushan.rebecca.design.scaffold.AppScaffold
 import top.guangyiliushan.rebecca.design.theme.AppTheme
 import top.guangyiliushan.rebecca.design.theme.ThemeSettings
 import top.guangyiliushan.rebecca.feature.dictionary.DictionaryScreen

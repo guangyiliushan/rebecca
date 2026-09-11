@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import rebecca.app.shared.generated.resources.Res
 import rebecca.app.shared.generated.resources.screen_settings
-import top.guangyiliushan.rebecca.design.components.AppPlaceholderScreen
+import top.guangyiliushan.rebecca.design.patterns.AppPlaceholderScreen
 
 @Composable
 fun SettingsScreen(modifier: Modifier = Modifier) {

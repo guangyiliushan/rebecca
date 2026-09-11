@@ -1,4 +1,4 @@
-package top.guangyiliushan.rebecca.design.components
+package top.guangyiliushan.rebecca.design.scaffold
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column

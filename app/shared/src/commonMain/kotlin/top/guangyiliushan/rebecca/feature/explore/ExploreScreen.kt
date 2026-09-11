@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import rebecca.app.shared.generated.resources.Res
 import rebecca.app.shared.generated.resources.screen_explore
-import top.guangyiliushan.rebecca.design.components.AppPlaceholderScreen
+import top.guangyiliushan.rebecca.design.patterns.AppPlaceholderScreen
 
 @Composable
 fun ExploreScreen(modifier: Modifier = Modifier) {

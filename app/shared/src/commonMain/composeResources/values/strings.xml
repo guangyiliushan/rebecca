@@ -12,4 +12,9 @@
     <string name="screen_explore">Explore</string>
     <string name="screen_settings">Settings</string>
     <string name="screen_showcase">Design Showcase</string>
+    <!-- 组件通用状态文案（域 A，读屏 stateDescription 来源；F6/F15） -->
+    <string name="state_selected">Selected</string>
+    <string name="state_not_selected">Not selected</string>
+    <string name="state_loading">Loading</string>
+    <string name="state_disabled">Disabled</string>
 </resources>
