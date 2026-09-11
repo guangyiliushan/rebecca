@@ -15,5 +15,5 @@ object AppOverlayWidth {
 
 /** 浮层高度约束。出处：drawer max-h-[80vh](0.8)。 */
 object AppOverlaySize {
-    val MaxHeightRatio = 0.8f
+    const val MaxHeightRatio = 0.8f
 }

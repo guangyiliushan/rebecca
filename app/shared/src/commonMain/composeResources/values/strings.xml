@@ -17,4 +17,9 @@
     <string name="state_not_selected">Not selected</string>
     <string name="state_loading">Loading</string>
     <string name="state_disabled">Disabled</string>
+    <!-- 弹层/顶栏 -->
+    <string name="action_more_options">More options</string>
+    <string name="action_close">Close</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_confirm">Confirm</string>
 </resources>

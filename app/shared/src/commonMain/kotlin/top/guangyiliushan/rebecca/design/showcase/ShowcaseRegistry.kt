@@ -66,4 +66,26 @@ val showcaseEntries: List<ShowcaseEntry> = listOf(
         variants = listOf("Linear", "Circular", "determinate", "indeterminate"),
         a11y = listOf("progressBarRangeInfo（确定态）", "label→stateDescription（读屏专用，无视觉文本）"),
     ),
+    // ---- overlays（design/overlays/）----
+    ShowcaseEntry(
+        component = "AppDialog",
+        variants = listOf("Xs", "Md"),
+        a11y = listOf("paneTitle（BasicAlertDialog 内建）", "Esc → onDismiss（onPreviewKeyEvent 桥接）", "focusable 初始焦点"),
+    ),
+    ShowcaseEntry(
+        component = "AppAlertDialog",
+        variants = listOf("Xs", "Md"),
+        a11y = listOf("alertdialog pattern", "dismissOnClickOutside=false 固定", "必有 Action/Cancel"),
+    ),
+    ShowcaseEntry(
+        component = "AppSheet",
+        variants = listOf("bottom only"),
+        a11y = listOf("ModalBottomSheet 内建 Scrim（更正 SH-2 误判）", "dragHandle 开关", "F17：无把手时调用方须放关闭按钮"),
+    ),
+    // ---- scaffold（design/scaffold/）----
+    ShowcaseEntry(
+        component = "AppTopBar",
+        variants = listOf("Small", "Medium", "Large"),
+        a11y = listOf("AppBarRow DSL 自动溢出", "overflowIndicator 自传（catalog 文案，规避 F6 平台泄漏）"),
+    ),
 )

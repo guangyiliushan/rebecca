@@ -30,7 +30,7 @@ fun AppChip(
     selected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    variant: AppChipVariant = AppChipVariant.Filter,
+    @Suppress("UNUSED_PARAMETER") variant: AppChipVariant = AppChipVariant.Filter,  // 0.1.0 视觉同源；语义差异登记 COMPONENTS.md（R8）
     enabled: Boolean = true,
     leadingIcon: (@Composable () -> Unit)? = null,
 ) {

@@ -17,5 +17,5 @@ object AppRadius {
 
     /** 全圆角，百分比语义：消费方 `RoundedCornerShape(percent = AppRadius.full)`。
      *  CMP 1.11 已移除 `Percentage`/`percent` 扩展，故以 Int 落值。 */
-    val full = 50
+    const val full = 50
 }

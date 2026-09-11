@@ -10,11 +10,16 @@ plugins {
     id("dev.detekt") version "2.0.0-alpha.6"
 }
 
-// Phase 0 spike（plan Task 0.4）：detekt 2.0.0-alpha.6 能否扫描 KMP commonMain（Q2 硬缺口）
+// Phase 0 spike（plan Task 0.4，实跑 PASS）：detekt 2.0.0-alpha.6 扫 KMP commonMain（Q2 硬缺口已解除）
 detekt {
     source.setFrom("src/commonMain/kotlin")
     buildUponDefaultConfig = true
     parallel = true
+    config.setFrom("$rootDir/config/detekt/detekt.yml")
+}
+
+dependencies {
+    detektPlugins(project(":buildLogic:detekt-rebecca"))
 }
 
 kotlin {

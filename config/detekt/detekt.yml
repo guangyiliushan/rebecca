@@ -1,0 +1,42 @@
+# detekt 2.0.0-alpha.6 配置（frontend-design-system v0.3 §9.2）
+# ⚠ 休眠状态（Plan B，grill Q2）：F 约束门禁现由 scripts/lint/f_gates.py 承担；
+# detekt 2.0 转正后迁移回来。配置键以 2.0 实际 schema 为准（官方格式：RuleSetId → 每个规则显式 active）。
+
+rebecca:
+  RebeccaColorLiteral:
+    active: true
+  RebeccaRawDimension:
+    active: true
+  RebeccaHardcodedText:
+    active: true
+
+complexity:
+  LongMethod:
+    active: true
+    allowedLines: 120
+
+naming:
+  FunctionNaming:
+    active: true
+    excludes: ['**/design/**']
+    ignoreAnnotated: ['Composable', 'Preview']
+  # 组件库：variant/size 枚举与组件同文件（Kotlin 惯例）；文件名以组件为准
+  MatchingDeclarationName:
+    active: false
+
+style:
+  NewLineAtEndOfFile:
+    active: true
+  # 行宽未统一（无 ktfmt），长度门禁不设
+  MaxLineLength:
+    active: false
+  # showcase/预览区演示值不适用魔法数字禁令
+  MagicNumber:
+    active: false
+  # 保持 active：曾抓到 AppSheet.modifier 未透传的真 bug（Phase 4）
+  UnusedParameter:
+    active: true
+  # ForbiddenImport（F11）：UI 禁止 import core.demo（架构依赖规则）
+  ForbiddenImport:
+    active: true
+    forbiddenImports: ['top.guangyiliushan.rebecca.core.demo.*']

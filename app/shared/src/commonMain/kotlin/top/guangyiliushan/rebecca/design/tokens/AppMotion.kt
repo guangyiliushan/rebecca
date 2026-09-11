@@ -6,7 +6,7 @@ package top.guangyiliushan.rebecca.design.tokens
  * §13-5 动画语言令牌化时以此为首批值。
  */
 object AppMotion {
-    val enterMs = 200
-    val exitMs = 100
-    val dialogScale = 0.95f
+    const val enterMs = 200
+    const val exitMs = 100
+    const val dialogScale = 0.95f
 }

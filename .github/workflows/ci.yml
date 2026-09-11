@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [dev]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      # F 约束门禁（Plan B：detekt 2.0 转正后迁移，见 scripts/lint/f_gates.py 头注）
+      - name: F gates (F1/F2/F6)
+        run: python scripts/lint/f_gates.py
+
+      # 对比度门禁（frontend-design-system §10.3 / F16）
+      - name: Contrast gate
+        run: python scripts/a11y/contrast.py
+
+      # 编译 + 全量测试（含 showcase 门禁与组件语义断言）
+      - name: Build and test
+        run: ./gradlew :core:allTests :app:shared:compileKotlinJvm :app:shared:jvmTest --console=plain
