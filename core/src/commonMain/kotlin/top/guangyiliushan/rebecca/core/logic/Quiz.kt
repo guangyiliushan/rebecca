@@ -22,7 +22,9 @@ fun buildQuestion(
     optionCount: Int = 4,
     rng: Random = Random.Default,
 ): QuizQuestion? {
-    val distractors = pool.filter { it.lemmaId != target.lemmaId }.toMutableList()
+    val distractors = pool.filter { it.lemmaId != target.lemmaId }
+        .distinctBy { it.lemmaId } // 干扰项之间同词形去重（同 lemma 多义项会造成重复选项）
+        .toMutableList()
     if (distractors.size < optionCount - 1) return null
     distractors.shuffle(rng)
     val chosen = distractors.take(optionCount - 1)

@@ -92,6 +92,8 @@ kotlin {
         jvmTest.dependencies {
             // desktop UI 测试运行时需要 skiko awt 本机库（PocComposeUiTest 前置）
             implementation(compose.desktop.currentOs)
+            // collectAsStateWithLifecycle 需要 Main dispatcher（0.1.1 QuizScreenSemanticsTest）
+            implementation(libs.kotlinx.coroutinesSwing)
         }
         jsMain.dependencies {
             implementation(libs.wrappers.browser)

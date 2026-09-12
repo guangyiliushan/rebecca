@@ -30,6 +30,7 @@ class QuizTest {
         val q = buildQuestion(POOL[0], POOL, rng = Random(42))
         assertNotNull(q)
         assertEquals(4, q.optionLemmaIds.size)
+        assertEquals(4, q.optionLemmaIds.toSet().size) // 四选项词形互不相同（含干扰项之间）
         assertEquals(q.optionLemmaIds[q.correctIndex], "l-run")
         assertEquals(1, q.optionLemmaIds.count { it == "l-run" }) // 无同 lemma 干扰项
         assertTrue("l-run" in q.optionLemmaIds)

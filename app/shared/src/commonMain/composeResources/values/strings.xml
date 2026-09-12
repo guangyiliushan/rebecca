@@ -32,4 +32,19 @@
     <string name="hub_pick_mode">Choose a mode</string>
     <string name="hub_chart_placeholder_title">Learning trends</string>
     <string name="hub_chart_placeholder_desc">Charts arrive in a later version.</string>
+    <!-- 选择题会话 + 结算（0.1.1） -->
+    <string name="quiz_progress">%1$d of %2$d</string>
+    <string name="quiz_question_hint">Choose the word</string>
+    <string name="quiz_correct">Correct</string>
+    <string name="quiz_wrong_retry">Not quite — try again</string>
+    <string name="quiz_next">Next</string>
+    <string name="quiz_detail_pronunciation">Pronunciation</string>
+    <string name="quiz_detail_examples">Examples</string>
+    <string name="quiz_detail_word_family">Word family</string>
+    <string name="quiz_result_title">Session complete</string>
+    <string name="quiz_result_accuracy">Accuracy</string>
+    <string name="quiz_result_time">Time</string>
+    <string name="quiz_result_retry">Practice again</string>
+    <string name="quiz_result_back">Back to hub</string>
+    <string name="quiz_empty_no_words">No words available for this mode</string>
 </resources>

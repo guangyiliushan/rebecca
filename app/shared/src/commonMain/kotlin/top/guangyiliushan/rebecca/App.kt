@@ -7,9 +7,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.ui.NavDisplay
-import rebecca.app.shared.generated.resources.Res
-import rebecca.app.shared.generated.resources.screen_study
-import top.guangyiliushan.rebecca.design.patterns.AppPlaceholderScreen
 import top.guangyiliushan.rebecca.design.scaffold.AppScaffold
 import top.guangyiliushan.rebecca.design.theme.AppTheme
 import top.guangyiliushan.rebecca.design.theme.ThemeSettings
@@ -18,6 +15,7 @@ import top.guangyiliushan.rebecca.feature.explore.ExploreScreen
 import top.guangyiliushan.rebecca.feature.lists.ListsScreen
 import top.guangyiliushan.rebecca.feature.settings.SettingsScreen
 import top.guangyiliushan.rebecca.feature.showcase.ShowcaseScreen
+import top.guangyiliushan.rebecca.feature.study.QuizScreen
 import top.guangyiliushan.rebecca.feature.study.StudyScreen
 import top.guangyiliushan.rebecca.navigation.Route
 import top.guangyiliushan.rebecca.navigation.rememberAppBackStack
@@ -55,8 +53,10 @@ fun App() {
                             )
                         }
                         is Route.Quiz -> NavEntry(route) {
-                            // 临时占位（Phase C 换真会话屏）
-                            AppPlaceholderScreen(titleRes = Res.string.screen_study)
+                            QuizScreen(
+                                mode = route.mode,
+                                onBackToHub = { backStack.removeLastOrNull() },
+                            )
                         }
                     }
                 },
