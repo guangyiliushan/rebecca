@@ -11,4 +11,5 @@ interface MasteryRepository {
     fun allFor(accountId: AccountId): List<SenseMastery>
     fun upsert(mastery: SenseMastery)
     fun record(event: MasteryEvent)
+    fun events(accountId: AccountId): List<MasteryEvent>
 }

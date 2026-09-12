@@ -4,6 +4,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
+import top.guangyiliushan.rebecca.core.logic.currentStreak
 
 /** 契约测试：每个 repo 接口方法断言可查回种子数据（"demo 驱动屏幕"的客观验证）。 */
 class DemoRepositoriesTest {
@@ -57,8 +58,22 @@ class DemoRepositoriesTest {
     }
 
     @Test
-    fun mastery_coversAllSeeds() {
-        assertEquals(DEMO_SENSES.size, DemoMasteryRepository.allFor(DEMO_ACCOUNT).size)
+    fun mastery_coversMasteredSeedsOnly() {
+        // 0.1.1：前 20 个有 mastery；后 8 个无 = 学习模式新词池（grill Q6）
+        assertEquals(20, DemoMasteryRepository.allFor(DEMO_ACCOUNT).size)
+    }
+
+    @Test
+    fun mastery_newWordPool_hasEightWithoutMastery() {
+        val new = DEMO_SENSES.filter { DemoMasteryRepository.mastery(DEMO_ACCOUNT, it.id) == null }
+        assertEquals(8, new.size)
+    }
+
+    @Test
+    fun mastery_eventsSeed_supportsFourDayStreak() {
+        val events = DemoMasteryRepository.events(DEMO_ACCOUNT)
+        assertTrue(events.isNotEmpty())
+        assertEquals(4, currentStreak(events, DEMO_NOW))
     }
 
     @Test
@@ -71,5 +86,11 @@ class DemoRepositoriesTest {
     @Test
     fun study_dueSensesReturnsSenses() {
         assertTrue(DemoStudyRepository.dueSenses(DEMO_ACCOUNT, limit = 5).isNotEmpty())
+    }
+
+    @Test
+    fun study_dueSensesOnlyDueNow_returnsSeven() {
+        // 索引 i%3==0 且 i<20 → 0,3,6,9,12,15,18 = 7 个 due 今天
+        assertEquals(7, DemoStudyRepository.dueSenses(DEMO_ACCOUNT, limit = 100).size)
     }
 }

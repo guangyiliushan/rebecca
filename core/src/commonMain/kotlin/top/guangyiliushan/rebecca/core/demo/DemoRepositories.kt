@@ -1,6 +1,7 @@
 package top.guangyiliushan.rebecca.core.demo
 
 import top.guangyiliushan.rebecca.core.model.AccountId
+import top.guangyiliushan.rebecca.core.model.AnswerChannel
 import top.guangyiliushan.rebecca.core.model.MasteryEvent
 import top.guangyiliushan.rebecca.core.model.Sense
 import top.guangyiliushan.rebecca.core.model.SenseId
@@ -77,9 +78,13 @@ internal object DemoMasteryRepository : MasteryRepository {
     private val mastery = mutableMapOf<Pair<AccountId, SenseId>, SenseMastery>()
     private val events = mutableListOf<MasteryEvent>()
 
+    /** 前 20 个 sense 有 mastery，后 8 个无 = 学习模式新词池（0.1.1，grill Q6）。 */
+    private const val MASTERED_SENSE_COUNT = 20
+
     init {
-        // 掌握度覆盖全部 senses；dueAt 部分设「今天」（DEMO_NOW）供调度演示
+        // 掌握度覆盖前 20 个 senses；dueAt 部分设「今天」（DEMO_NOW）供调度演示
         DEMO_SENSES.forEachIndexed { i, sense ->
+            if (i >= MASTERED_SENSE_COUNT) return@forEachIndexed
             upsert(
                 SenseMastery(
                     accountId = DEMO_ACCOUNT,
@@ -90,6 +95,24 @@ internal object DemoMasteryRepository : MasteryRepository {
                     updatedAt = DEMO_NOW,
                 ),
             )
+        }
+        // 事件种子：连续 4 天（含今天）→ 中枢 streak=4；事件只挂已有 mastery 的 sense
+        val mastered = DEMO_SENSES.map { it.id }.take(MASTERED_SENSE_COUNT)
+        val seedPlan = listOf(0L to 2, 1L to 3, 2L to 2, 3L to 3) // (daysAgo, count)
+        var k = 0
+        for ((daysAgo, count) in seedPlan) {
+            repeat(count) {
+                events += MasteryEvent(
+                    accountId = DEMO_ACCOUNT,
+                    id = "demo-event-$k",
+                    senseId = mastered[k++ % mastered.size],
+                    kind = "quiz",
+                    channel = AnswerChannel.TAP,
+                    correct = k % 2 == 0,
+                    durationMs = 1500 + k * 100,
+                    occurredAt = DEMO_NOW - daysAgo.days,
+                )
+            }
         }
     }
 
@@ -106,12 +129,15 @@ internal object DemoMasteryRepository : MasteryRepository {
     override fun record(event: MasteryEvent) {
         events += event
     }
+
+    override fun events(accountId: AccountId): List<MasteryEvent> =
+        events.filter { it.accountId == accountId }
 }
 
 internal object DemoStudyRepository : StudyRepository {
     override fun dueSenses(accountId: AccountId, limit: Int): List<Sense> {
-        // demo 调度不比较时钟；Slice 1 接练习会话时再加 dueAt <= now 截止判断。
         val ids = DemoMasteryRepository.allFor(accountId)
+            .filter { it.dueAt <= DEMO_NOW && it.deletedAt == null } // 0.1.1：dueAt <= now 截止
             .sortedBy { it.dueAt }
             .map { it.senseId }
             .take(limit)

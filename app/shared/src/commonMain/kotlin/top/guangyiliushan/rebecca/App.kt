@@ -7,6 +7,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.ui.NavDisplay
+import rebecca.app.shared.generated.resources.Res
+import rebecca.app.shared.generated.resources.screen_study
+import top.guangyiliushan.rebecca.design.patterns.AppPlaceholderScreen
 import top.guangyiliushan.rebecca.design.scaffold.AppScaffold
 import top.guangyiliushan.rebecca.design.theme.AppTheme
 import top.guangyiliushan.rebecca.design.theme.ThemeSettings
@@ -48,6 +51,10 @@ fun App() {
                                 settings = settings,
                                 onModeChange = { mode -> settings = settings.copy(mode = mode) },
                             )
+                        }
+                        is Route.Quiz -> NavEntry(route) {
+                            // 临时占位（Phase C 换真会话屏）
+                            AppPlaceholderScreen(titleRes = Res.string.screen_study)
                         }
                     }
                 },

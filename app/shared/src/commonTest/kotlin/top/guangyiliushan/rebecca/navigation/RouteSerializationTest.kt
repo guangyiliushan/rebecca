@@ -1,9 +1,12 @@
 package top.guangyiliushan.rebecca.navigation
 
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+import top.guangyiliushan.rebecca.core.model.QuizMode
 
 class RouteSerializationTest {
     private val json = Json { encodeDefaults = true }
@@ -16,6 +19,16 @@ class RouteSerializationTest {
                 val decoded = json.decodeFromString(Route.serializer(), encoded)
                 assertEquals(route, decoded)
             }
+    }
+
+    @Test
+    fun quizRoute_roundTripsWithMode() {
+        val route = Route.Quiz(QuizMode.REVIEW)
+        val json = Json.encodeToString(Route.serializer(), route)
+        assertEquals(route, Json.decodeFromString(Route.serializer(), json))
+        assertEquals("quiz/review", route.fragmentName)
+        assertEquals(Route.Quiz(QuizMode.REVIEW), routeFromFragmentName("quiz/review"))
+        assertEquals(QuizMode.LEARN, (routeFromFragmentName("quiz/bogus") as Route.Quiz).mode)
     }
 
     @Test
