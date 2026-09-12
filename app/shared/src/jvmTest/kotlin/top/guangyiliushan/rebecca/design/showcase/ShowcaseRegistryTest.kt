@@ -10,6 +10,9 @@ import kotlin.test.assertTrue
  * 漏注册 / 僵尸条目 / 缺官方多预览注解即失败。COMPONENTS.md 由注册表生成（单一真源）。
  * 放在 jvmTest（需要文件系统访问）。
  * 排除：AppFieldState.kt（CompositionLocal 定义，非组件）；AppScaffold.kt（骨架，Phase 4 改造后不进陈列注册表）。
+ * 范围裁定（2026-09-12，review P2-5 落盘）：patterns/ 目录不进本门禁——patterns 是 atoms 的组装（§6.1），
+ * 其成员（StatCard/EmptyState/AppPlaceholderScreen/LocalLayoutDensity）不以独立陈列单元注册；
+ * patterns 组件仍须遵守 §6.7 的双 preview 注解约定。此裁定同步于 frontend-design-system §6.7。
  */
 class ShowcaseRegistryTest {
     /** 仓库根（jvmTest 的 user.dir 是模块目录，向上找含 settings.gradle.kts 的目录）。 */

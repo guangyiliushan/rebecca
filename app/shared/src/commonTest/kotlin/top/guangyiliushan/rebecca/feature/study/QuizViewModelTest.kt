@@ -57,4 +57,40 @@ class QuizViewModelTest {
         assertEquals(0, vm.uiState.value.index)
         assertEquals(0, vm.uiState.value.correctCount)
     }
+
+    @Test
+    fun elapsed_isMeasuredFromSessionStart() {
+        // review P0 回归：clock 注入模拟经过时间，结算必须 > 0
+        var tick = 0L
+        val vm = QuizViewModel(QuizMode.REVIEW, clockSeconds = { tick })
+        val first = vm.uiState.value.question
+        tick = 42L // 模拟 42 秒
+        vm.onEvent(QuizUiEvent.OptionChosen(first!!.correctIndex))
+        vm.onEvent(QuizUiEvent.Next)
+        var guard = 0
+        while (!vm.uiState.value.finished && guard++ < 50) {
+            vm.onEvent(QuizUiEvent.OptionChosen(vm.uiState.value.question!!.correctIndex))
+            vm.onEvent(QuizUiEvent.Next)
+        }
+        assertTrue(vm.uiState.value.finished)
+        assertEquals(42L, vm.uiState.value.elapsedSeconds)
+    }
+
+    @Test
+    fun lastQuestion_showsDetailCard_beforeNextFinalizes() {
+        // review P2-6 回归：末题答对先详解卡，Next 才结算
+        val vm = vm(QuizMode.REVIEW)
+        var guard = 0
+        while (!vm.uiState.value.finished && guard++ < 50) {
+            val s = vm.uiState.value
+            vm.onEvent(QuizUiEvent.OptionChosen(s.question!!.correctIndex))
+            if (s.index + 1 >= s.total) {
+                // 末题答对：尚未 finished，详解卡在
+                assertTrue(vm.uiState.value.answeredCorrect)
+                assertFalse(vm.uiState.value.finished)
+            }
+            vm.onEvent(QuizUiEvent.Next)
+        }
+        assertTrue(vm.uiState.value.finished)
+    }
 }

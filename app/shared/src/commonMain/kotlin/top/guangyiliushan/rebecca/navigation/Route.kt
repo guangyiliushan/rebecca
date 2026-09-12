@@ -40,8 +40,8 @@ fun routeFromFragmentName(name: String): Route {
         "settings" -> Route.Settings
         "showcase" -> Route.Showcase
         "quiz" -> Route.Quiz(
-            runCatching { QuizMode.valueOf(seg.getOrNull(1)?.uppercase() ?: "") }
-                .getOrDefault(QuizMode.LEARN),
+            QuizMode.entries.firstOrNull { it.name.equals(seg.getOrNull(1), ignoreCase = true) }
+                ?: QuizMode.LEARN,
         )
         else -> Route.Study
     }

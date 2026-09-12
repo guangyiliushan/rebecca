@@ -13,7 +13,10 @@ data class QuizQuestion(
 
 /**
  * 构建一题：target + (optionCount-1) 个干扰项。
- * 干扰项排除与 target 同 lemmaId 的 Sense（同词形多义项会造成重复选项）；
+ * 干扰项排除与 target 同 lemmaId 的 Sense（同词形多义项会造成重复选项），
+ * 且干扰项之间按 lemmaId 去重。
+ * ⚠ 不变量：选项按 lemmaId 互不相同。UI 显示 form 时依赖"lemmaId ↔ form 一一对应"——
+ * demo 种子满足；0.1.2+ 若引入同形异义（不同 lemmaId 同 form），去重键须改为 form。
  * pool 中可用干扰不足时返回 null（调用方结束会话）。
  */
 fun buildQuestion(
@@ -34,7 +37,7 @@ fun buildQuestion(
 
 fun isCorrect(question: QuizQuestion, chosenIndex: Int): Boolean = chosenIndex == question.correctIndex
 
-/** 三模式候选筛选（Q6 裁定语义）。MIXED = 新词:到期 1:1 交错，rng 只决定组内顺序。 */
+/** 三模式候选筛选（Q6 裁定语义）。MIXED = 新词:到期 1:1 交错，rng 只决定组内顺序；任一池为空时回退为单池语义。 */
 fun selectCandidates(
     mode: QuizMode,
     new: List<Sense>,
@@ -45,6 +48,8 @@ fun selectCandidates(
     QuizMode.LEARN -> new.shuffled(rng).take(limit)
     QuizMode.REVIEW -> due.shuffled(rng).take(limit)
     QuizMode.MIXED -> {
+        if (new.isEmpty()) return due.shuffled(rng).take(limit)
+        if (due.isEmpty()) return new.shuffled(rng).take(limit)
         val n = new.shuffled(rng)
         val d = due.shuffled(rng)
         val per = minOf(n.size, d.size, (limit + 1) / 2)

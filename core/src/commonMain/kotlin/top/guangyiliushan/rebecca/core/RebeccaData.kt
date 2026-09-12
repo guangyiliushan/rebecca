@@ -1,6 +1,8 @@
 package top.guangyiliushan.rebecca.core
 
 import kotlin.time.Instant
+import top.guangyiliushan.rebecca.core.demo.DEMO_ACCOUNT
+import top.guangyiliushan.rebecca.core.demo.DEMO_NOW
 import top.guangyiliushan.rebecca.core.demo.DemoContentDictionaryRepository
 import top.guangyiliushan.rebecca.core.demo.DemoContentExploreRepository
 import top.guangyiliushan.rebecca.core.demo.DemoContentReadingRepository
@@ -24,9 +26,10 @@ import top.guangyiliushan.rebecca.core.repository.WordListRepository
 
 /** 阶段一服务定位器：唯一切换数据实现的地方。UI 只依赖接口，禁止 import demo。 */
 object RebeccaData {
-    // demo 常量公开面：UI 可经此取 demo 账户/时钟（F11 禁止直接 import core.demo）
-    val demoAccount: AccountId = AccountId("demo-account")
-    val demoNow: Instant = Instant.fromEpochMilliseconds(1_700_000_000_000L)
+    // demo 常量公开面（UI 可经此取 demo 账户/时钟，F11 禁止直接 import core.demo）；
+    // 单一真源在 demo 侧，此处仅重导出——依赖方向保持 demo → 组合根单向
+    val demoAccount: AccountId get() = DEMO_ACCOUNT
+    val demoNow: Instant get() = DEMO_NOW
 
     // 内容平面（只读）
     val contentDictionary: ContentDictionaryRepository = DemoContentDictionaryRepository

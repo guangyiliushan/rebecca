@@ -18,6 +18,7 @@ import rebecca.app.shared.generated.resources.quiz_result_back
 import rebecca.app.shared.generated.resources.quiz_result_retry
 import rebecca.app.shared.generated.resources.quiz_result_time
 import rebecca.app.shared.generated.resources.quiz_result_title
+import rebecca.app.shared.generated.resources.quiz_time_seconds
 import top.guangyiliushan.rebecca.design.components.AppButton
 import top.guangyiliushan.rebecca.design.components.AppButtonVariant
 import top.guangyiliushan.rebecca.design.components.AppCard
@@ -57,7 +58,7 @@ fun QuizResultScreen(
                     modifier = Modifier.fillMaxWidth(),
                 )
                 StatCard(
-                    value = "${state.elapsedSeconds}s",
+                    value = stringResource(Res.string.quiz_time_seconds, state.elapsedSeconds),
                     label = stringResource(Res.string.quiz_result_time),
                     modifier = Modifier.fillMaxWidth(),
                 )

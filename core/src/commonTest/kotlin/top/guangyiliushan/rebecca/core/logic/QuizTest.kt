@@ -81,4 +81,18 @@ class QuizTest {
         val new = (0..9).map { sense("n$it", "l-n$it", "n") }
         assertEquals(3, selectCandidates(QuizMode.LEARN, new, emptyList(), limit = 3, rng = Random(1)).size)
     }
+
+    @Test
+    fun selectCandidates_mixedFallsBackToSinglePoolWhenOneIsEmpty() {
+        // review P1-2 回归：任一池为空时回退单池语义，不出空会话
+        val new = (0..3).map { sense("n$it", "l-n$it", "n") }
+        assertEquals(
+            3,
+            selectCandidates(QuizMode.MIXED, new, emptyList(), limit = 3, rng = Random(1)).size,
+        )
+        assertEquals(
+            emptyList(),
+            selectCandidates(QuizMode.MIXED, emptyList(), emptyList(), limit = 3, rng = Random(1)),
+        )
+    }
 }

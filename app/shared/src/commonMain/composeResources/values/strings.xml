@@ -38,6 +38,8 @@
     <string name="quiz_correct">Correct</string>
     <string name="quiz_wrong_retry">Not quite — try again</string>
     <string name="quiz_next">Next</string>
+    <string name="quiz_view_results">View results</string>
+    <string name="quiz_time_seconds">%1$d s</string>
     <string name="quiz_detail_pronunciation">Pronunciation</string>
     <string name="quiz_detail_examples">Examples</string>
     <string name="quiz_detail_word_family">Word family</string>

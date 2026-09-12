@@ -31,6 +31,7 @@ import rebecca.app.shared.generated.resources.quiz_next
 import rebecca.app.shared.generated.resources.quiz_progress
 import rebecca.app.shared.generated.resources.quiz_question_hint
 import rebecca.app.shared.generated.resources.quiz_result_back
+import rebecca.app.shared.generated.resources.quiz_view_results
 import rebecca.app.shared.generated.resources.quiz_wrong_retry
 import top.guangyiliushan.rebecca.core.model.QuizMode
 import top.guangyiliushan.rebecca.design.components.AppButton
@@ -71,7 +72,6 @@ fun QuizScreen(
         EmptyState(
             icon = Icons.Filled.Search,
             title = stringResource(Res.string.quiz_empty_no_words),
-            description = "",
             modifier = modifier.fillMaxSize(),
             action = {
                 AppButton(
@@ -91,7 +91,7 @@ fun QuizScreen(
             .padding(spacing.md),
         verticalArrangement = Arrangement.spacedBy(spacing.md),
     ) {
-        // 进度
+        // 进度（不变量：question != null ⇒ total > 0，除法安全）
         Text(
             text = stringResource(Res.string.quiz_progress, state.index + 1, state.total),
             style = MaterialTheme.typography.labelMedium,
@@ -200,7 +200,13 @@ fun QuizScreen(
                         )
                     }
                     AppButton(
-                        text = stringResource(Res.string.quiz_next),
+                        text = stringResource(
+                            if (state.index + 1 >= state.total) {
+                                Res.string.quiz_view_results
+                            } else {
+                                Res.string.quiz_next
+                            },
+                        ),
                         onClick = { viewModel.onEvent(QuizUiEvent.Next) },
                         modifier = Modifier.fillMaxWidth(),
                     )

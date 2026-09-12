@@ -10,4 +10,5 @@ interface ContentDictionaryRepository {
     fun sensesForLemma(lemmaId: String): List<Sense>
     fun lemma(lemmaId: String): Lemma?
     fun search(query: String): List<Sense>
+    fun allSenses(): List<Sense>
 }

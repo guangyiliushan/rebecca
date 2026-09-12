@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlin.random.Random
 import kotlin.time.ExperimentalTime
+import kotlin.time.TimeMark
 import kotlin.time.TimeSource
 import top.guangyiliushan.rebecca.core.RebeccaData
 import top.guangyiliushan.rebecca.core.logic.QuizQuestion
@@ -31,7 +32,6 @@ sealed interface QuizUiEvent {
     data class OptionChosen(val index: Int) : QuizUiEvent
     data object Next : QuizUiEvent
     data object Retry : QuizUiEvent
-    data object BackToHub : QuizUiEvent // 由导航层处理
 }
 
 /**
@@ -41,19 +41,22 @@ sealed interface QuizUiEvent {
 @OptIn(ExperimentalTime::class)
 class QuizViewModel(
     private val mode: QuizMode,
-    // commonMain 无 System.currentTimeMillis（JS/wasm 不可用）；TimeSource.Monotonic 四端通用
-    private val nowSeconds: () -> Long = { TimeSource.Monotonic.markNow().elapsedNow().inWholeSeconds },
+    // 测试注入：null 时用真实时钟（TimeSource.Monotonic，四端通用；commonMain 无 System.currentTimeMillis）
+    private val clockSeconds: (() -> Long)? = null,
 ) : ViewModel() {
     private val _uiState: MutableStateFlow<QuizUiState>
     val uiState: StateFlow<QuizUiState>
 
     private var queue: List<QuizQuestion> = emptyList()
-    private var startSecond: Long = 0L
+    private var startMark: TimeMark = TimeSource.Monotonic.markNow()
 
     init {
         _uiState = MutableStateFlow(assemble())
         uiState = _uiState
     }
+
+    private fun elapsedSeconds(): Long =
+        (clockSeconds?.invoke() ?: startMark.elapsedNow().inWholeSeconds).coerceAtLeast(0)
 
     fun onEvent(event: QuizUiEvent) {
         val s = _uiState.value
@@ -63,7 +66,6 @@ class QuizViewModel(
             QuizUiEvent.Retry -> {
                 _uiState.value = assemble()
             }
-            QuizUiEvent.BackToHub -> Unit // 导航层消费
         }
     }
 
@@ -72,13 +74,12 @@ class QuizViewModel(
         if (s.answeredCorrect) return
         val correct = isCorrect(q, chosen)
         if (correct) {
-            val correctCount = s.correctCount + 1
             _uiState.value = s.copy(
                 selectedIndex = chosen,
                 answeredCorrect = true,
-                correctCount = correctCount,
+                correctCount = s.correctCount + 1,
             )
-            if (s.index + 1 >= s.total) finalize(correctCount)
+            // 末题不再立即 finalize：先给详解卡，Next 才结算（review P2-6）
         } else {
             _uiState.value = s.copy(
                 selectedIndex = chosen,
@@ -89,7 +90,10 @@ class QuizViewModel(
 
     private fun onNext(s: QuizUiState) {
         if (!s.answeredCorrect) return // 答对才能进下一题
-        if (s.index + 1 >= s.total) return
+        if (s.index + 1 >= s.total) {
+            finalize(s.correctCount)
+            return
+        }
         val next = queue[s.index + 1]
         _uiState.value = s.copy(
             question = next,
@@ -105,19 +109,19 @@ class QuizViewModel(
         _uiState.value = _uiState.value.copy(
             finished = true,
             correctCount = correctCount,
-            elapsedSeconds = (nowSeconds() - startSecond).coerceAtLeast(0),
+            elapsedSeconds = elapsedSeconds(),
         )
     }
 
     private fun assemble(): QuizUiState {
+        startMark = TimeSource.Monotonic.markNow() // Retry 重开会话时重置计时
         val account = RebeccaData.demoAccount
-        val all = RebeccaData.contentDictionary.search("")
+        val all = RebeccaData.contentDictionary.allSenses()
         val masteredIds = RebeccaData.mastery.allFor(account).map { it.senseId }.toSet()
         val new = all.filter { it.id !in masteredIds }
         val due = RebeccaData.study.dueSenses(account, limit = 1000)
         val candidates = selectCandidates(mode, new, due, limit = 20, rng = Random.Default)
         queue = candidates.mapNotNull { buildQuestion(it, all) }
-        startSecond = nowSeconds()
         val first = queue.firstOrNull()
         return QuizUiState(
             mode = mode,

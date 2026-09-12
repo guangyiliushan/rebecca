@@ -13,6 +13,8 @@ internal object DemoContentDictionaryRepository : ContentDictionaryRepository {
 
     override fun lemma(lemmaId: String): Lemma? = DEMO_LEMMAS.firstOrNull { it.id == lemmaId }
 
+    override fun allSenses(): List<Sense> = DEMO_SENSES
+
     override fun search(query: String): List<Sense> {
         val q = query.trim()
         if (q.isEmpty()) return DEMO_SENSES

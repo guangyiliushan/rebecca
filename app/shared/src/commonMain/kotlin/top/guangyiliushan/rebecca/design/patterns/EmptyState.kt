@@ -30,7 +30,7 @@ import top.guangyiliushan.rebecca.design.tokens.AppIconSize
 fun EmptyState(
     icon: ImageVector,
     title: String,
-    description: String,
+    description: String = "",
     modifier: Modifier = Modifier,
     action: (@Composable () -> Unit)? = null,
 ) {
