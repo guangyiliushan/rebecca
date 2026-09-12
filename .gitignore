@@ -21,3 +21,6 @@ node_modules/
 # Python（scripts/）
 __pycache__/
 *.pyc
+
+# Hermes 计划目录（不入仓库；计划在项目根 .hermes/）
+.hermes/
