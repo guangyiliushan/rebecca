@@ -41,7 +41,9 @@ fun App() {
                 onBack = { backStack.removeLastOrNull() },
                 entryProvider = { route: Route ->
                     when (route) {
-                        Route.Study -> NavEntry(route) { StudyScreen() }
+                        Route.Study -> NavEntry(route) {
+                            StudyScreen(onModeChosen = { mode -> backStack.add(Route.Quiz(mode)) })
+                        }
                         Route.Lists -> NavEntry(route) { ListsScreen() }
                         Route.Dictionary -> NavEntry(route) { DictionaryScreen() }
                         Route.Explore -> NavEntry(route) { ExploreScreen() }

@@ -1,6 +1,7 @@
 package top.guangyiliushan.rebecca.core.demo
 
 import kotlin.time.Instant
+import top.guangyiliushan.rebecca.core.RebeccaData
 import top.guangyiliushan.rebecca.core.model.AccountId
 import top.guangyiliushan.rebecca.core.model.AffixKind
 import top.guangyiliushan.rebecca.core.model.Book
@@ -11,8 +12,8 @@ import top.guangyiliushan.rebecca.core.model.Sense
 import top.guangyiliushan.rebecca.core.model.SenseId
 import top.guangyiliushan.rebecca.core.model.WordOfTheDay
 
-internal val DEMO_ACCOUNT = AccountId("demo-account")
-internal val DEMO_NOW = Instant.fromEpochMilliseconds(1_700_000_000_000L)
+internal val DEMO_ACCOUNT: AccountId get() = RebeccaData.demoAccount
+internal val DEMO_NOW: Instant get() = RebeccaData.demoNow
 
 /**
  * 种子数据唯一真源。构成约束（plan Q6 / R2 证据链 15-20 lemma / 20-30 sense）：

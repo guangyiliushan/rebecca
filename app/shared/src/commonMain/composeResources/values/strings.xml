@@ -22,4 +22,14 @@
     <string name="action_close">Close</string>
     <string name="action_cancel">Cancel</string>
     <string name="action_confirm">Confirm</string>
+    <!-- 学习中枢（0.1.1） -->
+    <string name="mode_learn">Learn</string>
+    <string name="mode_review">Review</string>
+    <string name="mode_mixed">Mixed</string>
+    <string name="hub_due">Due today</string>
+    <string name="hub_new">New words</string>
+    <string name="hub_streak">Day streak</string>
+    <string name="hub_pick_mode">Choose a mode</string>
+    <string name="hub_chart_placeholder_title">Learning trends</string>
+    <string name="hub_chart_placeholder_desc">Charts arrive in a later version.</string>
 </resources>
