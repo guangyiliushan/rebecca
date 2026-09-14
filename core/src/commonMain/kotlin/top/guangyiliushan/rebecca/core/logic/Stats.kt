@@ -17,3 +17,29 @@ fun currentStreak(events: List<MasteryEvent>, now: Instant): Int {
     while (d in days) { streak++; d-- }
     return streak
 }
+
+/**
+ * 最近 [days] 天每日是否有学习事件（索引 0 = 最旧，末位 = 今天）。
+ * 日切分口径与 [currentStreak] 相同（UTC epoch 日）；同日多条事件去重。
+ * 消费方：StreakCard 的 7 格 pipe 与 "Practiced on X of the last N days" 文本替代。
+ */
+fun activityDays(events: List<MasteryEvent>, now: Instant, days: Int = 7): List<Boolean> {
+    require(days > 0) { "days must be positive" }
+    fun dayOf(t: Instant): Long = t.epochSeconds / 86_400
+    val active = events.map { dayOf(it.occurredAt) }.toSet()
+    val today = dayOf(now)
+    return (days - 1 downTo 0).map { offset -> (today - offset) in active }
+}
+
+/**
+ * 今天（UTC 日，口径同 [currentStreak]）练习过的不同词条数。
+ * LearningFocusCard 的 "X of Y words" 进度文本之 X；同日同 sense 去重。
+ */
+fun distinctSensesToday(events: List<MasteryEvent>, now: Instant): Int {
+    val today = now.epochSeconds / 86_400
+    return events
+        .filter { it.occurredAt.epochSeconds / 86_400 == today }
+        .map { it.senseId }
+        .toSet()
+        .size
+}

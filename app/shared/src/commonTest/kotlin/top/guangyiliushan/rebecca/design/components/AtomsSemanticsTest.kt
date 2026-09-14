@@ -223,4 +223,18 @@ class AtomsSemanticsTest {
         val labeled = onAllNodes(hasStateDescription("50%")).fetchSemanticsNodes()
         assertTrue(labeled.isNotEmpty(), "label 应成为 stateDescription")
     }
+
+    @Test
+    fun appProgress_circularDeterminateHasRangeInfo() = runComposeUiTest {
+        setContent {
+            AppTheme(ThemeSettings()) {
+                AppProgress(variant = AppProgressVariant.Circular, progress = 0.5f, label = "10 of 20 words")
+            }
+        }
+        val nodes = onAllNodes(hasProgressBarRangeInfo(androidx.compose.ui.semantics.ProgressBarRangeInfo(0.5f, 0f..1f)))
+            .fetchSemanticsNodes()
+        assertTrue(nodes.isNotEmpty(), "Circular 确定态应有 progressBarRangeInfo（LearningFocusCard 进度环依赖）")
+        val labeled = onAllNodes(hasStateDescription("10 of 20 words")).fetchSemanticsNodes()
+        assertTrue(labeled.isNotEmpty(), "Circular label 应成为 stateDescription")
+    }
 }

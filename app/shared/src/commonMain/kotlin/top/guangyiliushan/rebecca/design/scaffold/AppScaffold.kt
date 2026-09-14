@@ -2,10 +2,15 @@ package top.guangyiliushan.rebecca.design.scaffold
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
@@ -18,10 +23,13 @@ import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffo
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.material3.adaptive.navigationsuite.rememberNavigationSuiteScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.window.core.layout.WindowSizeClass
 import org.jetbrains.compose.resources.stringResource
+import top.guangyiliushan.rebecca.design.patterns.LayoutDensity
+import top.guangyiliushan.rebecca.design.patterns.LocalLayoutDensity
 import top.guangyiliushan.rebecca.design.theme.AppTheme
 import top.guangyiliushan.rebecca.navigation.AppNavItem
 import top.guangyiliushan.rebecca.navigation.Route
@@ -62,30 +70,50 @@ fun AppScaffold(
         NavigationSuiteScaffoldDefaults.navigationSuiteType(adaptiveInfo)
     }
 
-    NavigationSuiteScaffold(
-        modifier = modifier,
-        navigationItems = {
-            navItems.forEach { navItem ->
-                NavigationSuiteItem(
-                    selected = navItem.route == currentRoute,
-                    onClick = { onNavigate(navItem.route) },
-                    icon = { Icon(navItem.icon, contentDescription = null) },
-                    label = { Text(stringResource(navItem.labelRes)) },
-                )
-            }
-        },
-        navigationSuiteType = suiteType,
-        state = scaffoldState,
+    // 布局密度下发（§7.3，0.1.1 补启用）：<600dp → Compact（HomeQuickActionBar 转 2×2）；
+    // patterns/屏幕只读 LocalLayoutDensity，不读窗口尺寸（F-L4/F9）
+    val layoutDensity = if (
+        adaptiveInfo.windowSizeClass.minWidthDp >= WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND
     ) {
-        Column(modifier = Modifier.fillMaxSize()) {
-            topBar?.invoke()
-            Box(
-                modifier = Modifier.fillMaxWidth().weight(1f),
-                contentAlignment = Alignment.TopCenter,
+        LayoutDensity.Regular
+    } else {
+        LayoutDensity.Compact
+    }
+
+    CompositionLocalProvider(LocalLayoutDensity provides layoutDensity) {
+        NavigationSuiteScaffold(
+            modifier = modifier,
+            navigationItems = {
+                navItems.forEach { navItem ->
+                    NavigationSuiteItem(
+                        selected = navItem.route == currentRoute,
+                        onClick = { onNavigate(navItem.route) },
+                        icon = { Icon(navItem.icon, contentDescription = null) },
+                        label = { Text(stringResource(navItem.labelRes)) },
+                    )
+                }
+            },
+            navigationSuiteType = suiteType,
+            state = scaffoldState,
+        ) {
+            Column(
+                // 安全区（用户实测：移动端缺上下安全距离——身份条顶进状态栏）。
+                // 顶部+横向由我们接管；底部由 NavigationSuiteScaffold 的导航条内建 inset 白拿。
+                modifier = Modifier
+                    .fillMaxSize()
+                    .windowInsetsPadding(
+                        WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal),
+                    ),
             ) {
-                // 内容宽度上限（桌面/Web 不拉面条）
-                Box(modifier = Modifier.widthIn(max = AppTheme.contentWidth.default).fillMaxHeight()) {
-                    (detail ?: content)()   // detail 非空整页呈现；主从双栏 0.1.2 落地
+                topBar?.invoke()
+                Box(
+                    modifier = Modifier.fillMaxWidth().weight(1f),
+                    contentAlignment = Alignment.TopCenter,
+                ) {
+                    // 内容宽度上限（桌面/Web 不拉面条）
+                    Box(modifier = Modifier.widthIn(max = AppTheme.contentWidth.default).fillMaxHeight()) {
+                        (detail ?: content)()   // detail 非空整页呈现；主从双栏 0.1.2 落地
+                    }
                 }
             }
         }

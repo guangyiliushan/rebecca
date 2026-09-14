@@ -23,15 +23,8 @@
     <string name="action_cancel">Cancel</string>
     <string name="action_confirm">Confirm</string>
     <!-- 学习中枢（0.1.1） -->
-    <string name="mode_learn">Learn</string>
-    <string name="mode_review">Review</string>
-    <string name="mode_mixed">Mixed</string>
     <string name="hub_due">Due today</string>
     <string name="hub_new">New words</string>
-    <string name="hub_streak">Day streak</string>
-    <string name="hub_pick_mode">Choose a mode</string>
-    <string name="hub_chart_placeholder_title">Learning trends</string>
-    <string name="hub_chart_placeholder_desc">Charts arrive in a later version.</string>
     <!-- 选择题会话 + 结算（0.1.1） -->
     <string name="quiz_progress">%1$d of %2$d</string>
     <string name="quiz_question_hint">Choose the word</string>
@@ -49,4 +42,67 @@
     <string name="quiz_result_retry">Practice again</string>
     <string name="quiz_result_back">Back to hub</string>
     <string name="quiz_empty_no_words">No words available for this mode</string>
+    <!-- 身份条（0.1.1 补：Study 富化） -->
+    <string name="identity_local_learner">Local learner</string>
+    <string name="identity_language_pair_short">EN · 中文</string>
+    <string name="identity_language_pair_semantics">Learning English; native language Chinese</string>
+    <!-- 学习焦点卡（0.1.1 补：Study 富化） -->
+    <string name="focus_title_vocabulary">Vocabulary learning</string>
+    <string name="focus_title_listening">Reading learning</string>
+    <string name="focus_title_grammar">Grammar learning</string>
+    <string name="focus_option_vocabulary">Vocabulary</string>
+    <string name="focus_option_listening">Reading</string>
+    <string name="focus_option_grammar">Grammar</string>
+    <string name="focus_badge_mixed">Mixed</string>
+    <!-- 注意：% 号必须随参数传入（CMP 格式化器不折叠 %%，双 % 渲染异常——用户实测） -->
+    <string name="focus_accuracy">Review accuracy: %1$s</string>
+    <string name="focus_no_reviews">Review accuracy: No reviews yet</string>
+    <plurals name="focus_daily_goal">
+        <item quantity="one">Daily goal: %1$d word</item>
+        <item quantity="other">Daily goal: %1$d words</item>
+    </plurals>
+    <string name="focus_cap_multiple_choice">Multiple choice</string>
+    <string name="focus_cap_spelling">Spelling</string>
+    <string name="focus_cap_image_association">Image association</string>
+    <string name="focus_planned_listening">Reading practice is planned. It arrives in a later version.</string>
+    <string name="focus_planned_grammar">Grammar learning is planned. Sentence spelling and word-form practice arrive in a later version.</string>
+    <string name="focus_word_list">Word list</string>
+    <string name="focus_word_list_adaptive">Adaptive list</string>
+    <string name="focus_word_list_adaptive_desc">Adapts to your level</string>
+    <plurals name="focus_word_count">
+        <item quantity="one">%1$d word</item>
+        <item quantity="other">%1$d words</item>
+    </plurals>
+    <plurals name="focus_progress">
+        <item quantity="one">%1$d of %2$d word</item>
+        <item quantity="other">%1$d of %2$d words</item>
+    </plurals>
+    <string name="focus_goal_edit">Edit</string>
+    <string name="focus_list_change">Change</string>
+    <string name="cta_today_vocabulary">Today’s vocabulary</string>
+    <string name="cta_today_listening">Today’s reading</string>
+    <string name="cta_today_grammar">Today’s grammar</string>
+    <string name="cta_practice_vocab_instead">Practice vocabulary instead</string>
+    <!-- 连续学习卡（0.1.1 补：Study 富化） -->
+    <plurals name="streak_title">
+        <item quantity="one">Continuous learning: %1$d day</item>
+        <item quantity="other">Continuous learning: %1$d days</item>
+    </plurals>
+    <string name="streak_practiced_days">Practiced on %1$d of the last %2$d days.</string>
+    <!-- 四按钮快捷条带（0.1.1 补：Study 富化；flows 0.1.3/0.1.4 落地，现诚实禁用） -->
+    <string name="qa_store">Store</string>
+    <string name="qa_challenges">Challenges</string>
+    <string name="qa_chat">AI chat</string>
+    <string name="qa_books">Books</string>
+    <string name="qa_planned">These tools arrive in later versions.</string>
+    <string name="action_back">Back</string>
+    <string name="quiz_screen_title">Practice session</string>
+    <!-- 每日目标编辑 sheet（0.1.1 补：Study 富化） -->
+    <string name="goal_sheet_title">Edit daily goal</string>
+    <string name="goal_save">Save</string>
+    <string name="goal_decrease">Decrease</string>
+    <string name="goal_increase">Increase</string>
+    <!-- 词单选择 sheet（0.1.1 补：Study 富化） -->
+    <string name="list_sheet_title">Choose word list</string>
+    <string name="list_adaptive_desc">Adapts to your level</string>
 </resources>

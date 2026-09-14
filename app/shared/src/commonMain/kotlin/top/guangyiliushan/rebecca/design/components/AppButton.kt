@@ -2,6 +2,7 @@ package top.guangyiliushan.rebecca.design.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -32,6 +33,7 @@ enum class AppButtonSize(val height: Dp, val horizontalPadding: Dp) {
     Sm(AppControlHeight.Sm, AppSpacing.controlPadding),
     Md(AppControlHeight.Md, AppSpacing.md),
     Lg(AppControlHeight.Lg, AppSpacing.lg),
+    Xl(AppControlHeight.Xl, AppSpacing.lg), // 08 spec：主导 CTA 用 Xl 视觉高度
 }
 
 /** 控件文本样式：bodyMedium 档（对齐官方 text-sm），Link 变体加下划线。 */
@@ -45,6 +47,7 @@ private fun buttonTextStyle(underlined: Boolean): TextStyle {
 /**
  * 主按钮（frontend-design-system v0.3 §6.5；规格页 03-atom-mapping/01）。
  * loading=true → 禁交互 + spinner（role=status）+ stateDescription 来自 catalog（F15）。
+ * maxLines>1 → 高度改 defaultMinSize（内容换行增高不裁切，WCAG 1.4.4）；默认 1 行定高（既有行为不变）。
  */
 @Composable
 fun AppButton(
@@ -57,6 +60,7 @@ fun AppButton(
     loading: Boolean = false,
     leadingIcon: (@Composable () -> Unit)? = null,
     trailingIcon: (@Composable () -> Unit)? = null,
+    maxLines: Int = 1,
 ) {
     val colors = AppTheme.colors
     val effectiveEnabled = enabled && !loading
@@ -77,8 +81,17 @@ fun AppButton(
 
     Button(
         onClick = onClick,
-        // 顺序：minimumInteractiveComponentSize 在外（min 48dp 约束整体热区）→ requiredHeight 在内（视觉高度）
-        modifier = modifier.minimumInteractiveComponentSize().requiredHeight(size.height),
+        // 顺序：minimumInteractiveComponentSize 在外（min 48dp 约束整体热区）→ 高度在内（视觉高度）。
+        // maxLines>1：定高改最小高（内容换行时按钮增高，不裁切——WCAG 1.4.4）
+        modifier = modifier
+            .minimumInteractiveComponentSize()
+            .then(
+                if (maxLines > 1) {
+                    Modifier.defaultMinSize(minHeight = size.height)
+                } else {
+                    Modifier.requiredHeight(size.height)
+                },
+            ),
         enabled = effectiveEnabled,
         elevation = ButtonDefaults.buttonElevation(
             defaultElevation = 0.dp,
@@ -96,7 +109,12 @@ fun AppButton(
         } else {
             leadingIcon?.invoke()
         }
-        Text(text, style = buttonTextStyle(underlined = variant == AppButtonVariant.Link), maxLines = 1)
+        Text(
+            text,
+            style = buttonTextStyle(underlined = variant == AppButtonVariant.Link),
+            maxLines = maxLines,
+            softWrap = maxLines > 1,
+        )
         if (!loading) trailingIcon?.invoke()
     }
 }

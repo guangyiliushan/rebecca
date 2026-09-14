@@ -1,5 +1,6 @@
 package top.guangyiliushan.rebecca.design.scaffold
 
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.material3.AppBarMenuState
 import androidx.compose.material3.AppBarRow
 import androidx.compose.material3.AppBarRowScope
@@ -50,6 +51,10 @@ fun AppTopBar(
         )
     }
 
+    // insets 归 AppScaffold（唯一入口，F-L4/§7.2）：AppTopBar 不自带 windowInsets，
+    // 否则与 scaffold 的 safeDrawing 顶部内边距双算（review 🟠1：Android 答题页顶部白条翻倍）
+    val noInsets = WindowInsets(0, 0, 0, 0)
+
     when (size) {
         AppTopBarSize.Small -> TopAppBar(
             title = title,
@@ -67,6 +72,7 @@ fun AppTopBar(
                 navigationIconContentColor = colors.onSurface,
                 actionIconContentColor = colors.onSurface,
             ),
+            windowInsets = noInsets,
         )
         AppTopBarSize.Medium -> MediumTopAppBar(
             title = title,
@@ -84,6 +90,7 @@ fun AppTopBar(
                 navigationIconContentColor = colors.onSurface,
                 actionIconContentColor = colors.onSurface,
             ),
+            windowInsets = noInsets,
         )
         AppTopBarSize.Large -> LargeTopAppBar(
             title = title,
@@ -101,6 +108,7 @@ fun AppTopBar(
                 navigationIconContentColor = colors.onSurface,
                 actionIconContentColor = colors.onSurface,
             ),
+            windowInsets = noInsets,
         )
     }
 }

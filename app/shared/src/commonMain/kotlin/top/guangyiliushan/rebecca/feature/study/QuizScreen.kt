@@ -9,7 +9,9 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,6 +24,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.jetbrains.compose.resources.stringResource
 import rebecca.app.shared.generated.resources.Res
+import rebecca.app.shared.generated.resources.action_back
 import rebecca.app.shared.generated.resources.quiz_correct
 import rebecca.app.shared.generated.resources.quiz_detail_examples
 import rebecca.app.shared.generated.resources.quiz_detail_pronunciation
@@ -30,21 +33,26 @@ import rebecca.app.shared.generated.resources.quiz_empty_no_words
 import rebecca.app.shared.generated.resources.quiz_next
 import rebecca.app.shared.generated.resources.quiz_progress
 import rebecca.app.shared.generated.resources.quiz_question_hint
-import rebecca.app.shared.generated.resources.quiz_result_back
+import rebecca.app.shared.generated.resources.quiz_screen_title
 import rebecca.app.shared.generated.resources.quiz_view_results
 import rebecca.app.shared.generated.resources.quiz_wrong_retry
 import top.guangyiliushan.rebecca.core.model.QuizMode
 import top.guangyiliushan.rebecca.design.components.AppButton
 import top.guangyiliushan.rebecca.design.components.AppButtonVariant
 import top.guangyiliushan.rebecca.design.components.AppCard
+import top.guangyiliushan.rebecca.design.components.AppIconButton
 import top.guangyiliushan.rebecca.design.components.AppProgress
 import top.guangyiliushan.rebecca.design.patterns.EmptyState
+import top.guangyiliushan.rebecca.design.scaffold.AppTopBar
 import top.guangyiliushan.rebecca.design.theme.AppTheme
 import top.guangyiliushan.rebecca.design.tokens.AppContentWidth
 
 /**
  * 选择题会话（roadmap 0.1.1）：题干=definition，选项=lemma form（四选一）。
  * 答题交互全态：错标红可续选（Q7 仅内存）、对出详解卡、结算转 QuizResultScreen。
+ * 顶部 AppTopBar 统一返回（用户实测：桌面/Web 无系统返回手势，答题界面顶部必须有返回按钮；
+ * 05 spec：Quiz 沉浸式、不装 AppIdentityBar，但需要自己的上下文头部）。
+ * 结算态额外保留卡内 "Back to hub" 主行动（会话结束的自然出口），空态只留顶部返回（review 🟡3）。
  */
 @Composable
 fun QuizScreen(
@@ -54,39 +62,57 @@ fun QuizScreen(
     viewModel: QuizViewModel = viewModel { QuizViewModel(mode) },
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    val spacing = AppTheme.spacing
 
-    if (state.finished) {
-        QuizResultScreen(
-            state = state,
-            onRetry = { viewModel.onEvent(QuizUiEvent.Retry) },
-            onBackToHub = onBackToHub,
-            modifier = modifier,
-        )
-        return
-    }
-
-    val question = state.question
-    if (question == null) {
-        // 空态：该模式无词可练
-        EmptyState(
-            icon = Icons.Filled.Search,
-            title = stringResource(Res.string.quiz_empty_no_words),
-            modifier = modifier.fillMaxSize(),
-            action = {
-                AppButton(
-                    text = stringResource(Res.string.quiz_result_back),
+    Column(modifier = modifier.fillMaxSize()) {
+        AppTopBar(
+            title = { Text(stringResource(Res.string.quiz_screen_title)) },
+            navigationIcon = {
+                AppIconButton(
                     onClick = onBackToHub,
-                    variant = AppButtonVariant.Ghost,
+                    icon = { Icon(Icons.Filled.ArrowBack, contentDescription = null) },
+                    contentDescription = stringResource(Res.string.action_back),
                 )
             },
         )
-        return
+
+        when {
+            state.finished -> QuizResultScreen(
+                state = state,
+                onRetry = { viewModel.onEvent(QuizUiEvent.Retry) },
+                onBackToHub = onBackToHub,
+                modifier = Modifier.fillMaxWidth().weight(1f),
+            )
+
+            state.question == null -> EmptyState(
+                icon = Icons.Filled.Search,
+                title = stringResource(Res.string.quiz_empty_no_words),
+                modifier = Modifier.fillMaxWidth().weight(1f),
+                // 无 action：顶部 AppTopBar 的返回已是唯一出口（review 🟡3：避免双重返回入口）
+            )
+
+            else -> QuizBody(
+                state = state,
+                onOptionChosen = { viewModel.onEvent(QuizUiEvent.OptionChosen(it)) },
+                onNext = { viewModel.onEvent(QuizUiEvent.Next) },
+                modifier = Modifier.fillMaxWidth().weight(1f),
+            )
+        }
     }
+}
+
+/** 答题主体（题干卡 + 四选项 + 反馈 + 详解卡）。 */
+@Composable
+private fun QuizBody(
+    state: QuizUiState,
+    onOptionChosen: (Int) -> Unit,
+    onNext: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val spacing = AppTheme.spacing
+    val question = state.question ?: return // 防御：调用方已保证非空
 
     Column(
         modifier = modifier
-            .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .padding(spacing.md),
         verticalArrangement = Arrangement.spacedBy(spacing.md),
@@ -128,7 +154,7 @@ fun QuizScreen(
                 val isCorrectChoice = state.answeredCorrect && i == state.selectedIndex
                 AppButton(
                     text = form,
-                    onClick = { viewModel.onEvent(QuizUiEvent.OptionChosen(i)) },
+                    onClick = { onOptionChosen(i) },
                     modifier = Modifier.fillMaxWidth(),
                     variant = when {
                         isCorrectChoice -> AppButtonVariant.Primary
@@ -207,7 +233,7 @@ fun QuizScreen(
                                 Res.string.quiz_next
                             },
                         ),
-                        onClick = { viewModel.onEvent(QuizUiEvent.Next) },
+                        onClick = onNext,
                         modifier = Modifier.fillMaxWidth(),
                     )
                 }

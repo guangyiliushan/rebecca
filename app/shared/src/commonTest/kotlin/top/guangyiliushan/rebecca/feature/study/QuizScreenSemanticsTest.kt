@@ -6,6 +6,7 @@ import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.runComposeUiTest
@@ -72,5 +73,38 @@ class QuizScreenSemanticsTest {
             }
         }
         onNodeWithText("Session complete").assertExists()
+    }
+
+    @Test
+    fun topBackButton_returnsToHub() = runComposeUiTest {
+        // 用户实测：答题界面顶部无返回按钮（桌面/Web 无系统返回手势）→ 顶部 AppTopBar 返回
+        var backed = false
+        val vm = QuizViewModel(QuizMode.REVIEW)
+        setContent {
+            AppTheme(ThemeSettings()) {
+                QuizScreen(mode = QuizMode.REVIEW, onBackToHub = { backed = true }, viewModel = vm)
+            }
+        }
+        onNodeWithContentDescription("Back").performClick()
+        assertTrue(backed, "顶部返回按钮应回调 onBackToHub")
+    }
+
+    @Test
+    fun topBackButton_visibleInResultState() = runComposeUiTest {
+        var backed = false
+        val vm = QuizViewModel(QuizMode.REVIEW)
+        var guard = 0
+        while (!vm.uiState.value.finished && guard++ < 50) {
+            vm.onEvent(QuizUiEvent.OptionChosen(vm.uiState.value.question!!.correctIndex))
+            vm.onEvent(QuizUiEvent.Next)
+        }
+        setContent {
+            AppTheme(ThemeSettings()) {
+                QuizScreen(mode = QuizMode.REVIEW, onBackToHub = { backed = true }, viewModel = vm)
+            }
+        }
+        onNodeWithText("Session complete").assertExists()
+        onNodeWithContentDescription("Back").performClick()
+        assertTrue(backed, "结算态顶部返回按钮也应可用")
     }
 }
