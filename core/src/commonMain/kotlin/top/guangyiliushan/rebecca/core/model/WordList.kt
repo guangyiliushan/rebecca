@@ -10,6 +10,7 @@ data class WordList(
     val title: String,
     val sourceType: WordListSource,
     val updatedAt: Instant,
+    val description: String? = null, // 0.1.2 追加（backend-scope §6.2 同批更新）；置于 updatedAt 后保住既有位置实参
     val deletedAt: Instant? = null,
 )
 

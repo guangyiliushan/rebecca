@@ -10,4 +10,12 @@ object EnglishProfile : LanguageProfile {
     override val languageCode = "en"
     override val engines = EngineFeature.entries.toSet()
     override val stringCatalog: StringCatalog = EmptyStringCatalog
+
+    /** 英语包桩：CEFR 级别理论词汇量口径（0.7.1 换真词表数据）。 */
+    override val vocabularyLevels = listOf(
+        VocabularyLevel("A1", 500),
+        VocabularyLevel("A2", 1500),
+        VocabularyLevel("B1", 3000),
+        VocabularyLevel("B2", 5000),
+    )
 }

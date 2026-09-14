@@ -105,4 +105,64 @@
     <!-- 词单选择 sheet（0.1.1 补：Study 富化） -->
     <string name="list_sheet_title">Choose word list</string>
     <string name="list_adaptive_desc">Adapts to your level</string>
+    <!-- 0.1.2 词单库 -->
+    <string name="list_search_placeholder">Search word lists</string>
+    <string name="list_search_clear">Clear search</string>
+    <!-- Adaptive 固定首行（虚拟池：不可查看/删除，点击恢复为活跃来源；Active 徽章） -->
+    <string name="list_adaptive_title">Adaptive list</string>
+    <string name="list_adaptive_level_meta">Level %1$s · %2$s words</string>
+    <string name="list_state_active">Active</string>
+    <string name="row_new_label">New: %1$d</string>
+    <string name="lists_active_title">Active word list</string>
+    <string name="list_active_subtitle">Adapts to your level, reviews, and new words.</string>
+    <string name="list_practice">Practice</string>
+    <string name="lists_your_library">Your library</string>
+    <string name="lists_completed">Completed</string>
+    <string name="lists_completed_count">Completed · %1$d items</string>
+    <string name="lists_create">Create list</string>
+    <string name="list_more_options">More options</string>
+    <string name="list_set_active_action">Set %1$s as active list</string>
+    <string name="row_learned_mastered">%1$d learned · %2$d mastered</string>
+    <string name="row_due_label">Due: %1$d</string>
+    <string name="empty_search_title">No matching lists</string>
+    <string name="empty_search_desc">You can create a list or clear the search.</string>
+    <string name="empty_library_desc">No custom lists yet. Create one to start.</string>
+    <string name="list_create_title">Create word list</string>
+    <string name="list_title_label">Title</string>
+    <string name="list_title_required">Title is required</string>
+    <string name="list_desc_label">Description</string>
+    <string name="list_desc_optional">Optional</string>
+    <string name="detail_practice">Practice mixed</string>
+    <string name="detail_set_active">Set active</string>
+    <string name="detail_state_active">Active list</string>
+    <string name="detail_progress_title">Learning progress</string>
+    <string name="detail_mastered">%1$d mastered</string>
+    <string name="manage_title">Manage words</string>
+    <string name="manage_search_placeholder">Search dictionary</string>
+    <string name="manage_add">Add</string>
+    <string name="manage_already_in_list">Already in list</string>
+    <string name="detail_manage_words">Manage words</string>
+    <!-- 词筛选与档位（R-D9：入 catalog，feature 层零硬编码文案） -->
+    <string name="filter_all">All</string>
+    <string name="filter_new">New</string>
+    <string name="filter_learning">Learning</string>
+    <string name="filter_mastered">Mastered</string>
+    <string name="filter_due">Due</string>
+    <string name="detail_word_due">%1$s · due</string>
+    <string name="detail_word_remove">Remove from list</string>
+    <string name="detail_remove_title">Remove word?</string>
+    <string name="detail_remove_desc">The word leaves this list. Your mastery history is kept.</string>
+    <string name="detail_practice_disabled">This list has no words yet.</string>
+    <string name="empty_library_title">No lists yet</string>
+    <string name="card_face_front">Front</string>
+    <string name="card_face_back">Back</string>
+    <string name="card_summary_title">Session complete</string>
+    <!-- 0.1.2 卡片浏览 -->
+    <string name="card_session_title">Card session</string>
+    <string name="card_session_done">Session complete</string>
+    <string name="card_session_summary">%1$d known · %2$d not known</string>
+    <string name="card_progress">%1$d of %2$d</string>
+    <string name="card_flip">Tap to flip</string>
+    <string name="card_decide_known">Know</string>
+    <string name="card_decide_unknown">Don’t know</string>
 </resources>

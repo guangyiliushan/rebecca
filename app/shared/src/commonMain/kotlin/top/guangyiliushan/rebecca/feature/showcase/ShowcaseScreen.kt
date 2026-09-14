@@ -19,6 +19,9 @@ import top.guangyiliushan.rebecca.design.components.AppCard
 import top.guangyiliushan.rebecca.design.components.AppCardContent
 import top.guangyiliushan.rebecca.design.components.AppCardHeader
 import top.guangyiliushan.rebecca.design.components.AppChip
+import top.guangyiliushan.rebecca.design.components.AppChipGroup
+import top.guangyiliushan.rebecca.design.components.AppChipGroupMode
+import top.guangyiliushan.rebecca.design.components.AppChipGroupSpacing
 import top.guangyiliushan.rebecca.design.components.AppField
 import top.guangyiliushan.rebecca.design.components.AppIconButton
 import top.guangyiliushan.rebecca.design.components.AppInput
@@ -87,6 +90,20 @@ fun ShowcaseScreen(settings: ThemeSettings, onModeChange: (ThemeMode) -> Unit) {
         Row(horizontalArrangement = Arrangement.spacedBy(AppTheme.spacing.sm)) {
             AppChip(label = { Text("Verb") }, selected = true, onClick = {})
             AppChip(label = { Text("Noun") }, selected = false, onClick = {})
+        }
+
+        Section("AppChipGroup")
+        AppChipGroup(mode = AppChipGroupMode.Single, spacing = AppChipGroupSpacing.Separated) {
+            AppChip(label = { Text("Verb") }, selected = true, onClick = {})
+            AppChip(label = { Text("Noun") }, selected = false, onClick = {})
+        }
+        AppChipGroup(mode = AppChipGroupMode.Single, spacing = AppChipGroupSpacing.Connected) {
+            AppChip(label = { Text("Prev") }, selected = false, onClick = {})
+            AppChip(label = { Text("Next") }, selected = true, onClick = {})
+        }
+        AppChipGroup(mode = AppChipGroupMode.Multiple, spacing = AppChipGroupSpacing.Separated) {
+            AppChip(label = { Text("Alpha") }, selected = true, onClick = {})
+            AppChip(label = { Text("Beta") }, selected = true, onClick = {})
         }
 
         Section("AppCard")

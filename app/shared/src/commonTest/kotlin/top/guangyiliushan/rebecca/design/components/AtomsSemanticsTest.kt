@@ -1,6 +1,9 @@
 package top.guangyiliushan.rebecca.design.components
 
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -236,5 +239,52 @@ class AtomsSemanticsTest {
         assertTrue(nodes.isNotEmpty(), "Circular 确定态应有 progressBarRangeInfo（LearningFocusCard 进度环依赖）")
         val labeled = onAllNodes(hasStateDescription("10 of 20 words")).fetchSemanticsNodes()
         assertTrue(labeled.isNotEmpty(), "Circular label 应成为 stateDescription")
+    }
+
+    private fun hasSelectableGroup() = SemanticsMatcher("selectableGroup") {
+        it.config.contains(SemanticsProperties.SelectableGroup)
+    }
+
+    @Test
+    fun appChipGroup_singleExposesSelectableGroup() = runComposeUiTest {
+        setContent {
+            AppTheme(ThemeSettings()) {
+                AppChipGroup(mode = AppChipGroupMode.Single, spacing = AppChipGroupSpacing.Separated) {
+                    AppChip(label = { Text("Verb") }, selected = true, onClick = {})
+                    AppChip(label = { Text("Noun") }, selected = false, onClick = {})
+                }
+            }
+        }
+        val groups = onAllNodes(hasSelectableGroup()).fetchSemanticsNodes()
+        assertTrue(groups.isNotEmpty(), "Single 模式应有 selectableGroup 语义（§10.2 选择组）")
+    }
+
+    @Test
+    fun appChipGroup_chipClickFiresCallback() = runComposeUiTest {
+        var clicked = false
+        setContent {
+            AppTheme(ThemeSettings()) {
+                AppChipGroup(mode = AppChipGroupMode.Single, spacing = AppChipGroupSpacing.Separated) {
+                    AppChip(label = { Text("Verb") }, selected = false, onClick = { clicked = true })
+                }
+            }
+        }
+        onNodeWithText("Verb").performClick()
+        assertTrue(clicked, "chip 点击应触发回调")
+    }
+
+    @Test
+    fun appInput_leadingAndTrailingSlots() = runComposeUiTest {
+        setContent {
+            AppTheme(ThemeSettings()) {
+                AppInput(
+                    value = "query",
+                    onValueChange = {},
+                    leading = { Icon(Icons.Filled.Search, contentDescription = null) },
+                    trailing = { AppIconButton(onClick = {}, icon = { Text("x") }, contentDescription = "Clear") },
+                )
+            }
+        }
+        onNodeWithContentDescription("Clear").assertExists() // trailing 槽挂载（搜索框清空按钮路径）
     }
 }

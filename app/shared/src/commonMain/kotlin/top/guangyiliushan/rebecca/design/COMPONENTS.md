@@ -35,6 +35,11 @@
 - **变体**: Filter, Choice, Assist
 - **语义承诺（F15）**: role=Checkbox(M3 SelectableChip 语义); stateDescription(selected，来自 catalog); touch>=48dp
 
+### AppChipGroup
+
+- **变体**: Single/Separated, Single/Connected, Multiple/Separated
+- **语义承诺（F15）**: Single: selectableGroup()（§10.2 选择组）; 已知差异：roving focus 未实现（focusGroup() 不存在于 CMP 1.12.0，AndroidX 独有）; 已知差异：Connected 仅零间距连排，shadcn 首/尾圆角收拢未实现
+
 ### AppInput
 
 - **变体**: default, error, disabled

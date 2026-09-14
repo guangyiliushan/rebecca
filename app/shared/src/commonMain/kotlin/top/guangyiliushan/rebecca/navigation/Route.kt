@@ -15,6 +15,14 @@ sealed interface Route : NavKey {
     @Serializable @SerialName("showcase")   data object Showcase : Route   // debug-only，不进主导航
     @Serializable @SerialName("quiz")
     data class Quiz(val mode: QuizMode) : Route
+
+    /** 词单详情（0.1.2）；fragment: lists/{listId}，无第二段 = Lists 库屏。 */
+    @Serializable @SerialName("wordListDetail")
+    data class WordListDetail(val listId: String) : Route
+
+    /** 卡片浏览会话（0.1.2）；fragment: cards/{listId}。 */
+    @Serializable @SerialName("cardSession")
+    data class CardSession(val listId: String) : Route
 }
 
 /** URL 片段名（与 @SerialName 一致；browser 适配器 saveKey 用）。 */
@@ -27,6 +35,8 @@ val Route.fragmentName: String
         Route.Settings -> "settings"
         Route.Showcase -> "showcase"
         is Route.Quiz -> "quiz/${mode.name.lowercase()}"
+        is Route.WordListDetail -> "lists/${listId}"
+        is Route.CardSession -> "cards/${listId}"
     }
 
 /** URL 片段名反解析（browser 适配器 restoreKey 用）；未知片段回退 Study。 */
@@ -34,7 +44,11 @@ fun routeFromFragmentName(name: String): Route {
     val seg = name.split("/")
     return when (seg[0]) {
         "study" -> Route.Study
-        "lists" -> Route.Lists
+        "lists" -> if (seg.size > 1 && seg[1].isNotBlank()) {
+            Route.WordListDetail(seg[1])
+        } else {
+            Route.Lists
+        }
         "dictionary" -> Route.Dictionary
         "explore" -> Route.Explore
         "settings" -> Route.Settings
@@ -43,6 +57,7 @@ fun routeFromFragmentName(name: String): Route {
             QuizMode.entries.firstOrNull { it.name.equals(seg.getOrNull(1), ignoreCase = true) }
                 ?: QuizMode.LEARN,
         )
+        "cards" -> Route.CardSession(seg.getOrElse(1) { "" })
         else -> Route.Study
     }
 }

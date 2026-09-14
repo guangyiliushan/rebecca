@@ -53,8 +53,9 @@ class DemoRepositoriesTest {
     }
 
     @Test
-    fun wordLists_threeLists() {
-        assertEquals(3, DemoWordListRepository.lists(DEMO_ACCOUNT).size)
+    fun wordLists_fourLists() {
+        // 0.1.2：第 4 张 "Starter words"（全 mastered）供 Completed 折叠区演示
+        assertEquals(4, DemoWordListRepository.lists(DEMO_ACCOUNT).size)
     }
 
     @Test

@@ -22,6 +22,8 @@ internal object DemoWordListRepository : WordListRepository {
         WordList(DEMO_ACCOUNT, "list-basic-verbs", "Basic Verbs", WordListSource.PACK, DEMO_NOW),
         WordList(DEMO_ACCOUNT, "list-daily-life", "Daily Life", WordListSource.USER, DEMO_NOW),
         WordList(DEMO_ACCOUNT, "list-root-port", "port = carry（词根族）", WordListSource.AI_EXTRACT, DEMO_NOW),
+        // 0.1.2 追加：全 mastered 词单，供 Completed 折叠区演示（Q9；只追加不动既有语义）
+        WordList(DEMO_ACCOUNT, "list-completed-basics", "Starter words", WordListSource.USER, DEMO_NOW, description = "Already mastered starter set"),
     )
 
     private val entries = mutableListOf(
@@ -51,6 +53,11 @@ internal object DemoWordListRepository : WordListRepository {
         WordListEntry(DEMO_ACCOUNT, "list-root-port", SenseId("sense-port-2"), 1, DEMO_NOW),
         WordListEntry(DEMO_ACCOUNT, "list-root-port", SenseId("sense-supply-1"), 2, DEMO_NOW),
         WordListEntry(DEMO_ACCOUNT, "list-root-port", SenseId("sense-form-2"), 3, DEMO_NOW),
+        // list-completed-basics（0.1.2 追加）：4 词全 mastered（sense 均在前 20 掌握池内）
+        WordListEntry(DEMO_ACCOUNT, "list-completed-basics", SenseId("sense-run-1"), 0, DEMO_NOW),
+        WordListEntry(DEMO_ACCOUNT, "list-completed-basics", SenseId("sense-supply-1"), 1, DEMO_NOW),
+        WordListEntry(DEMO_ACCOUNT, "list-completed-basics", SenseId("sense-book-1"), 2, DEMO_NOW),
+        WordListEntry(DEMO_ACCOUNT, "list-completed-basics", SenseId("sense-light-2"), 3, DEMO_NOW),
     )
 
     override fun lists(accountId: AccountId): List<WordList> =
@@ -71,6 +78,39 @@ internal object DemoWordListRepository : WordListRepository {
             it.accountId == entry.accountId && it.listId == entry.listId && it.senseId == entry.senseId
         }
         entries += entry
+    }
+
+    override fun deleteList(accountId: AccountId, listId: String, deletedAt: Instant) {
+        val idx = lists.indexOfFirst { it.accountId == accountId && it.id == listId }
+        if (idx >= 0) lists[idx] = lists[idx].copy(deletedAt = deletedAt)
+        for (i in entries.indices) { // JS 目标无 MutableList.replaceAll（JVM 扩展），用索引循环
+            val e = entries[i]
+            if (e.accountId == accountId && e.listId == listId) entries[i] = e.copy(deletedAt = deletedAt)
+        }
+    }
+
+    override fun removeEntry(accountId: AccountId, listId: String, senseId: SenseId, deletedAt: Instant) {
+        val idx = entries.indexOfFirst {
+            it.accountId == accountId && it.listId == listId && it.senseId == senseId
+        }
+        if (idx >= 0) entries[idx] = entries[idx].copy(deletedAt = deletedAt)
+    }
+
+    override fun reorder(accountId: AccountId, listId: String, orderedSenseIds: List<SenseId>, updatedAt: Instant) {
+        orderedSenseIds.forEachIndexed { newOrd, senseId ->
+            val idx = entries.indexOfFirst {
+                it.accountId == accountId && it.listId == listId && it.senseId == senseId
+            }
+            if (idx >= 0) entries[idx] = entries[idx].copy(ord = newOrd, updatedAt = updatedAt)
+        }
+    }
+
+    override fun listsContaining(accountId: AccountId, senseId: SenseId): List<WordList> {
+        val listIds = entries
+            .filter { it.accountId == accountId && it.senseId == senseId && it.deletedAt == null }
+            .map { it.listId }
+            .toSet()
+        return lists.filter { it.accountId == accountId && it.deletedAt == null && it.id in listIds }
     }
 }
 
@@ -95,6 +135,18 @@ internal object DemoMasteryRepository : MasteryRepository {
                     updatedAt = DEMO_NOW,
                 ),
             )
+        }
+        // 0.1.2 追加：Mastered 样本（stability ≥ 2.0，Q5 分档演示）——只改 stability，不动 dueAt/lapses/计数/事件
+        val masteredOverrides = mapOf(
+            "sense-run-1" to 2.0,
+            "sense-supply-1" to 2.5,
+            "sense-book-1" to 3.0,
+            "sense-light-2" to 4.0,
+            "sense-form-1" to 5.0,
+        )
+        masteredOverrides.forEach { (idValue, stability) ->
+            val sid = SenseId(idValue)
+            mastery[DEMO_ACCOUNT to sid]?.let { mastery[DEMO_ACCOUNT to sid] = it.copy(stability = stability) }
         }
         // 事件种子：连续 4 天（含今天）→ 中枢 streak=4；事件只挂已有 mastery 的 sense
         val mastered = DEMO_SENSES.map { it.id }.take(MASTERED_SENSE_COUNT)

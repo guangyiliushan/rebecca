@@ -47,6 +47,15 @@ val showcaseEntries: List<ShowcaseEntry> = listOf(
         a11y = listOf("role=Checkbox(M3 SelectableChip 语义)", "stateDescription(selected，来自 catalog)", "touch>=48dp"),
     ),
     ShowcaseEntry(
+        component = "AppChipGroup",
+        variants = listOf("Single/Separated", "Single/Connected", "Multiple/Separated"),
+        a11y = listOf(
+            "Single: selectableGroup()（§10.2 选择组）",
+            "已知差异：roving focus 未实现（focusGroup() 不存在于 CMP 1.12.0，AndroidX 独有）",
+            "已知差异：Connected 仅零间距连排，shadcn 首/尾圆角收拢未实现",
+        ),
+    ),
+    ShowcaseEntry(
         component = "AppInput",
         variants = listOf("default", "error", "disabled"),
         a11y = listOf("EditableText", "error() 文案来自 AppFieldState.errors 首条（catalog）", "focus ring=ring 槽"),

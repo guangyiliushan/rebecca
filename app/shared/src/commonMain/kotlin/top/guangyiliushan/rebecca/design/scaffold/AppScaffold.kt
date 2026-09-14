@@ -24,6 +24,7 @@ import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.material3.adaptive.navigationsuite.rememberNavigationSuiteScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.window.core.layout.WindowSizeClass
@@ -33,6 +34,13 @@ import top.guangyiliushan.rebecca.design.patterns.LocalLayoutDensity
 import top.guangyiliushan.rebecca.design.theme.AppTheme
 import top.guangyiliushan.rebecca.navigation.AppNavItem
 import top.guangyiliushan.rebecca.navigation.Route
+
+/**
+ * 主从双栏当前是否生效（AppScaffold 下发；R-D1）。
+ * App 层路由 lambda 据此判定：expanded 生效时左栏渲染库屏（详情走 detail 槽），
+ * 未生效时路由栈自行压栈渲染详情屏幕。
+ */
+val LocalDetailPaneVisible = compositionLocalOf { false }
 
 /**
  * 断点唯一入口（F-L4/F9）：官方 `NavigationSuiteScaffold`。
@@ -70,6 +78,11 @@ fun AppScaffold(
         NavigationSuiteScaffoldDefaults.navigationSuiteType(adaptiveInfo)
     }
 
+    // 主从双栏判定（§7.3，0.1.2）：expanded 且 detail 非空 → MasterDetailPane 同屏；
+    // 否则 detail 由路由层压栈呈现（调用方在 compact 下不应传 detail，本层兜底）。
+    val showDetailPane = detail != null &&
+        adaptiveInfo.windowSizeClass.minWidthDp >= WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND
+
     // 布局密度下发（§7.3，0.1.1 补启用）：<600dp → Compact（HomeQuickActionBar 转 2×2）；
     // patterns/屏幕只读 LocalLayoutDensity，不读窗口尺寸（F-L4/F9）
     val layoutDensity = if (
@@ -80,7 +93,12 @@ fun AppScaffold(
         LayoutDensity.Compact
     }
 
-    CompositionLocalProvider(LocalLayoutDensity provides layoutDensity) {
+    // 主从双栏可见性下发给 content/detail lambda（R-D1：App 层的 entryProvider 需据此决定
+    // 「expanded 左栏渲染库屏 vs compact 压栈渲染详情屏」，否则详情双重渲染）
+    CompositionLocalProvider(
+        LocalLayoutDensity provides layoutDensity,
+        LocalDetailPaneVisible provides showDetailPane,
+    ) {
         NavigationSuiteScaffold(
             modifier = modifier,
             navigationItems = {
@@ -110,9 +128,19 @@ fun AppScaffold(
                     modifier = Modifier.fillMaxWidth().weight(1f),
                     contentAlignment = Alignment.TopCenter,
                 ) {
-                    // 内容宽度上限（桌面/Web 不拉面条）
-                    Box(modifier = Modifier.widthIn(max = AppTheme.contentWidth.default).fillMaxHeight()) {
-                        (detail ?: content)()   // detail 非空整页呈现；主从双栏 0.1.2 落地
+                    if (showDetailPane && detail != null) {
+                        // expanded 主从双栏（0.1.2；MasterDetailPane 读 LocalLayoutDensity）
+                        top.guangyiliushan.rebecca.design.patterns.MasterDetailPane(
+                            modifier = Modifier.fillMaxSize(),
+                            list = content,
+                            detail = detail,
+                        )
+                    } else {
+                        // 单栏：content 由路由栈自行呈现（detail 槽不参与——R-D1：旧 `detail ?: content`
+                        // 会让 compact 下详情屏被渲染两次且左栏错屏）
+                        Box(modifier = Modifier.widthIn(max = AppTheme.contentWidth.default).fillMaxHeight()) {
+                            content()
+                        }
                     }
                 }
             }

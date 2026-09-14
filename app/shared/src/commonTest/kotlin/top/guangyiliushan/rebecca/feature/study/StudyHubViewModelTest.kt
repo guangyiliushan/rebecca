@@ -33,8 +33,8 @@ class StudyHubViewModelTest {
         assertEquals(listOf(false, false, false, true, true, true, true), s.activity)
         assertEquals(4, s.practicedDays)
         assertNull(s.activeListId)                          // adaptive 默认
-        assertEquals(listOf("Basic Verbs", "Daily Life", "port = carry（词根族）"), s.quickLists.map { it.title })
-        assertEquals(listOf(11, 8, 4), s.quickLists.map { it.wordCount })
+        assertEquals(listOf("Basic Verbs", "Daily Life", "port = carry（词根族）", "Starter words"), s.quickLists.map { it.title })
+        assertEquals(listOf(11, 8, 4, 4), s.quickLists.map { it.wordCount })
     }
 
     @Test
